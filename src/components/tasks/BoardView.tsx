@@ -18,6 +18,7 @@ import { ALL_STATUSES, STATUS_LABELS } from "../../types";
 import { StatusCircle } from "./StatusCircle";
 import { TimeAdjustMenu } from "./TimeAdjustMenu";
 import { SubTaskList } from "./SubTaskList";
+import { StatusPill, TagChip } from "./Pills";
 import type { SubTaskService } from "../../services/subTaskService";
 
 interface BoardViewProps {
@@ -198,6 +199,7 @@ export function BoardView({
                       )}
                     </div>
                     <div className="notion-board-card-meta">
+                      <StatusPill status={t.status} language={language} />
                       {t.completionDate && (
                         <span
                           className={`notion-board-card-due ${
@@ -215,11 +217,11 @@ export function BoardView({
                     </div>
                     {t.tags.length > 0 && (
                       <div className="notion-board-card-tags">
-                        {t.tags.slice(0, 3).map((tag) => (
-                          <span key={tag} className="notion-board-card-tag">#{tag}</span>
+                        {t.tags.slice(0, 4).map((tag) => (
+                          <TagChip key={tag} tag={tag} />
                         ))}
-                        {t.tags.length > 3 && (
-                          <span className="notion-board-card-tag-more">+{t.tags.length - 3}</span>
+                        {t.tags.length > 4 && (
+                          <span className="notion-board-card-tag-more">+{t.tags.length - 4}</span>
                         )}
                       </div>
                     )}

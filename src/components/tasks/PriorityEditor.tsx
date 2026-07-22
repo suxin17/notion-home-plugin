@@ -1,52 +1,62 @@
-// PriorityEditor - 优先级下拉
-// 点击切换 🔺 / 🔼 / 无
+// PriorityEditor - Notion 风格优先级 pill
+// 点击 → 弹出小菜单选 high / medium / low / none
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import type { TaskPriority } from "../../types";
+import { PriorityPill } from "./Pills";
 
 interface PriorityEditorProps {
   value: TaskPriority;
   onChange: (p: TaskPriority) => void | Promise<void>;
+  language?: "zh" | "en";
 }
 
-const ICONS: Record<TaskPriority, string> = {
-  high: "🔺",
-  medium: "🔼",
-  low: "🔽",
-  none: "·",
-};
+const OPTIONS: { value: TaskPriority; zh: string; en: string }[] = [
+  { value: "high",   zh: "🔺 高",   en: "🔺 High" },
+  { value: "medium", zh: "🔼 中",   en: "🔼 Medium" },
+  { value: "low",    zh: "🔽 低",   en: "🔽 Low" },
+  { value: "none",   zh: "无",     en: "None" },
+];
 
-const LABELS: Record<TaskPriority, string> = {
-  high: "高",
-  medium: "中",
-  low: "低",
-  none: "无",
-};
-
-export function PriorityEditor({ value, onChange }: PriorityEditorProps) {
+export function PriorityEditor({ value, onChange, language = "zh" }: PriorityEditorProps) {
   const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // 点击外部关闭
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
 
   return (
-    <div className="notion-tasks-priority-editor">
-      <button
-        className={`notion-tasks-priority-btn is-${value}`}
+    <div className="notion-tasks-priority-editor" ref={ref}>
+      <PriorityPill
+        priority={value}
+        language={language}
         onClick={() => setOpen((o) => !o)}
-        title="切换优先级"
-      >
-        {ICONS[value]} {value !== "none" && LABELS[value]}
-      </button>
+      />
       {open && (
         <div className="notion-tasks-priority-menu">
-          {(["high", "medium", "low", "none"] as TaskPriority[]).map((p) => (
+          {OPTIONS.map((o) => (
             <button
-              key={p}
-              className={`notion-tasks-priority-option is-${p} ${value === p ? "is-active" : ""}`}
+              key={o.value}
+              className={`notion-tasks-priority-option is-${o.value} ${value === o.value ? "is-active" : ""}`}
               onClick={async () => {
-                await onChange(p);
+                await onChange(o.value);
                 setOpen(false);
               }}
             >
-              {ICONS[p]} {LABELS[p]}
+              <PriorityPill
+                priority={o.value}
+                language={language}
+                size="sm"
+              />
             </button>
           ))}
         </div>

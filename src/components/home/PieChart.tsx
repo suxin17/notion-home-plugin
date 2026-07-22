@@ -39,12 +39,41 @@ export function PieChart({ tasks, timeLog, mode, language = "zh", refreshKey, ra
   // 2. 聚合：timeLog entry → task → 按 mode 分组
   // 注意：tag 模式下一个任务有 N 个 tag 时，时长**均分**到这 N 个 tag，
   //      这样总时间 = 实际计时时间（不会被多算）
+  //
+  // 颜色分配：顺序 + 稳定（不是 hash 避免冲突）
+  //   - 每个 key 第一次出现时分配下一个 colorIdx
+  //   - 同 key 永远同色
+  //   - 颜色用完循环
   const segments = useMemo(() => {
     // task 索引（按 file path）
     const taskByFile = new Map<string, Task>();
     for (const t of tasks) taskByFile.set(t.file, t);
 
-    const map = new Map<string, { label: string; seconds: number; color: string }>();
+    const map = new Map<string, { label: string; seconds: number; color: string; colorIdx: number }>();
+    const keyColor = new Map<string, number>();
+    const usedIdxs = new Set<number>();
+    let nextIdx = 0;
+
+    const pickColor = (key: string): { color: string; colorIdx: number } => {
+      // 同 key 同色
+      if (keyColor.has(key)) {
+        const idx = keyColor.get(key)!;
+        return { color: pieColors[idx % pieColors.length], colorIdx: idx };
+      }
+      // 新 key：找下一个未用 idx（hash 起手 → 冲突就往下走）
+      let idx = simpleHash(key) % pieColors.length;
+      let attempts = 0;
+      while (usedIdxs.has(idx) && attempts < pieColors.length) {
+        idx = (idx + 1) % pieColors.length;
+        attempts++;
+      }
+      // 全部已用：循环
+      if (usedIdxs.has(idx)) idx = nextIdx % pieColors.length;
+      keyColor.set(key, idx);
+      usedIdxs.add(idx);
+      nextIdx++;
+      return { color: pieColors[idx % pieColors.length], colorIdx: idx };
+    };
 
     for (const entry of filteredLog) {
       const task = taskByFile.get(entry.file);
@@ -60,10 +89,12 @@ export function PieChart({ tasks, timeLog, mode, language = "zh", refreshKey, ra
         if (existing) {
           existing.seconds += perKeySec;
         } else {
+          const { color, colorIdx } = pickColor(key);
           map.set(key, {
             label: key,
             seconds: perKeySec,
-            color: colorFor(task, mode, key),
+            color,
+            colorIdx,
           });
         }
       }
@@ -187,33 +218,42 @@ function groupKeys(t: Task, mode: PieMode): string[] {
   return [t.basename];
 }
 
+/** 扇形图调色板（顺序分配，避免 hash 冲突） */
+const pieColors = [
+  "#4f7cff", // 蓝
+  "#4ec9b0", // 青绿
+  "#7d8aff", // 靛蓝
+  "#9d6bdd", // 紫
+  "#ec5b8a", // 粉
+  "#e85d5d", // 红
+  "#9bc158", // 黄绿
+  "#3ebec4", // 青
+  "#5fc8c8", // 蓝绿
+  "#b67ad9", // 淡紫
+  "#67b86c", // 草绿
+  "#56a8d6", // 天蓝
+  "#c490f0", // 薰衣草
+  "#7ec8e3", // 浅蓝
+  "#a78bfa", // 紫罗兰
+  "#d97a8a", // 玫红
+  "#5fb1a3", // 海绿
+  "#8bc88a", // 嫩绿
+];
+
+/** 简单稳定 hash：保证同 key 永远映射到同 colorIdx 起手位 */
+function simpleHash(s: string): number {
+  let h = 5381;
+  for (let i = 0; i < s.length; i++) {
+    h = ((h << 5) + h + s.charCodeAt(i)) | 0;
+  }
+  return Math.abs(h);
+}
+
 function colorFor(t: Task, mode: PieMode, key: string): string {
   if (mode === "status") {
     return STATUS_LABELS[key as TaskStatus]?.color || "#9ca3af";
   }
-  // Notion 风格调色板（柔和、识别度高，浅/深色模式都好看）
-  // 比纯 Tailwind 500 略降饱和度，相邻扇形对比明显
-  const colors = [
-    "#4f7cff", // 蓝
-    "#4ec9b0", // 青绿
-    "#f5a623", // 橙
-    "#9d6bdd", // 紫
-    "#ec5b8a", // 粉
-    "#e85d5d", // 红
-    "#9bc158", // 黄绿
-    "#3ebec4", // 青
-    "#f5d000", // 金黄
-    "#a8825c", // 棕
-    "#7d8aff", // 靛
-    "#5fc8c8", // 蓝绿
-    "#f9943b", // 蜜橙
-    "#b67ad9", // 淡紫
-    "#67b86c", // 草绿
-    "#d97a6b", // 砖红
-  ];
-  let h = 0;
-  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) | 0;
-  return colors[Math.abs(h) % colors.length];
+  return pieColors[simpleHash(key) % pieColors.length];
 }
 
 export const PIE_MODE_LABELS: Record<PieMode, { zh: string; en: string }> = {

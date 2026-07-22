@@ -16,6 +16,7 @@ import type { Task, TaskStatus } from "../../types";
 import { StatusCircle } from "./StatusCircle";
 import { TimeAdjustMenu } from "./TimeAdjustMenu";
 import { SubTaskList } from "./SubTaskList";
+import { StatusPill, TagChip } from "./Pills";
 import type { SubTaskService } from "../../services/subTaskService";
 import { getStatRange, type StatRange } from "../../services/timeTracker";
 
@@ -360,6 +361,10 @@ export function GanttView({
                       </span>
                       {t.priority === "high" && <span className="notion-gantt-prio">🔺</span>}
                       {t.priority === "medium" && <span className="notion-gantt-prio">🔼</span>}
+                      {/* tag chip 紧跟标题（最多 2 个，避免太挤） */}
+                      {t.tags.slice(0, 2).map((tag) => (
+                        <TagChip key={tag} tag={tag} />
+                      ))}
                       {onToggleExpand && subTaskService && (
                         <button
                           className="notion-gantt-expand"

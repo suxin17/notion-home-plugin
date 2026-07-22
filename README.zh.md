@@ -2,7 +2,7 @@
 
 一个 Notion 风格的 Obsidian 插件：Home 主页 + 轻量级任务管理。每个任务就是一个 `.md` 文件，元数据写在 frontmatter，计时自动写回文件。
 
-> [English](README.md) · 当前版本 v0.7.0
+> [English](README.md) · 当前版本 v0.7.1
 
 ![主页截图](docs/screenshot.png)
 
@@ -153,7 +153,25 @@ git push origin main --tags
 
 ## 🗺 更新日志
 
-### v0.7.0（当前）
+### v0.7.1（当前）
+
+**新增**
+- **Notion 风格任务表格** — 真实 `<table>` 结构，列对齐（名称 / 状态 / 优先级 / 开始 / 截止 / 标签 / 计时 / 操作），inline 编辑日期、tag、优先级，状态循环切换
+- **Pills 组件** — `StatusPill` / `PriorityPill` / `TagChip` 在三个视图复用，tag 颜色稳定
+- **中英双语跨视图同步** — Home 和 Tasks 都有语言切换按钮，改一处另一处立即同步
+- **Home 自适应宽度** — `max-width: 1400px`，< 720px 自动单列
+- **扇形图分组切换** — Home 顶部 inline 切换 状态 / tags / 任务
+
+**调整**
+- **扇形图调色板** — 替换所有暖黄/棕色为 18 色 Notion 风柔和色；**顺序分配 + 冲突避免**，hash 撞色的任务不再同色
+- **列表视图标签**改名为「表格」（内部 `viewMode === "list"` 保持兼容）
+- 状态/优先级/标签 UI 全部用 Notion 风格 pill
+
+**修复**
+- Avatar 不再被 banner 的 `overflow: hidden` 裁掉
+- 扇形图不再有屎黄/棕/砖红色调
+
+### v0.7.0
 
 **新增**
 - **Sub-task 列表** — List / Board / Gantt 三个视图都能展开/收起，行内勾选 checkbox 写回文件

@@ -24,6 +24,8 @@ import { TimeAdjustMenu } from "../components/tasks/TimeAdjustMenu";
 import { SubTaskList } from "../components/tasks/SubTaskList";
 import { parseQuickCapture, mergeTemplateOpts, pickFolderForTemplate } from "../templates/taskTemplates";
 import { STAT_RANGES, STAT_RANGE_LABELS, type StatRange } from "../services/timeTracker";
+import { StatusPill, PriorityPill, TagChip } from "../components/tasks/Pills";
+import { TaskTable } from "../components/tasks/TaskTable";
 
 export const VIEW_TYPE_TASK = "notion-home-tasks";
 
@@ -60,10 +62,10 @@ type ViewMode = "list" | "gantt" | "board";
 /** 简易 i18n 字典（任务面板用） */
 const T: Record<string, { zh: string; en: string }> = {
   searchPlaceholder: { zh: "🔍 搜索任务 / 文件…", en: "🔍 Search tasks / files…" },
-  viewList: { zh: "☰ 列表", en: "☰ List" },
+  viewList: { zh: "☰ 表格", en: "☰ Table" },
   viewBoard: { zh: "▦ 看板", en: "▦ Board" },
   viewGantt: { zh: "📊 时间线", en: "📊 Timeline" },
-  viewListTitle: { zh: "列表视图", en: "List view" },
+  viewListTitle: { zh: "表格视图（Notion 风格）", en: "Table view (Notion style)" },
   viewBoardTitle: { zh: "看板视图", en: "Board view" },
   viewGanttTitle: { zh: "时间线", en: "Timeline" },
   allStatus: { zh: "全部", en: "All" },
@@ -116,6 +118,8 @@ function TaskScreen({ plugin }: { plugin: NotionHomePlugin }) {
   );
   // 展开的 task ids（用于展示 sub-task，跨视图共享）
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+  // 表格里正在编辑的日期字段
+  const [editingDate, setEditingDate] = useState<{ taskId: string; which: "start" | "completionDate" } | null>(null);
   const [, setTick] = useState(0);
 
   // 订阅语言变化
@@ -277,6 +281,13 @@ function TaskScreen({ plugin }: { plugin: NotionHomePlugin }) {
 
   const handleSetDate = async (task: Task, which: "start" | "completionDate", val: string | null) => {
     await plugin.taskService.setDates(task, which === "start" ? { start: val } : { completionDate: val });
+  };
+
+  // 状态循环：Prepare → Doing → Done → Abandon → Prepare
+  const handleCycleStatus = async (task: Task) => {
+    const order: TaskStatus[] = ["Prepare", "Doing", "Done", "Abandon"];
+    const next = order[(order.indexOf(task.status) + 1) % order.length];
+    await handleSetStatus(task, next);
   };
 
   // ===== 新建任务 =====
@@ -485,119 +496,34 @@ function TaskScreen({ plugin }: { plugin: NotionHomePlugin }) {
         ) : null
       ) : (
         mods.list && (
-          <div className="notion-tasks-list">
-            {sorted.length === 0 ? (
-              <div className="notion-tasks-empty">
-                {filterStatus === "Done" ? tt("emptyDone", lang) : tt("emptyFilter", lang)}
-              </div>
-            ) : (
-              sorted.map((t) => {
-                const isCurrent = plugin.timeTracker.getCurrent()?.taskId === t.id;
-                const totalSec = (t.totalSeconds || 0) +
-                  (isCurrent ? Math.round(plugin.timeTracker.getElapsedMs() / 1000) : 0);
-                const isExpanded = expandedIds.has(t.id);
-                return (
-                  <div
-                    key={t.id}
-                    className={`notion-tasks-item status-${t.status.toLowerCase()} prio-${t.priority} ${isCurrent ? "is-timing" : ""} ${isExpanded ? "is-expanded" : ""}`}
-                  >
-                    <StatusCircle
-                      value={t.status}
-                      onChange={(s) => handleSetStatus(t, s)}
-                      size={18}
-                    />
-                    <div className="notion-tasks-body">
-                      <div className="notion-tasks-line-main">
-                        <button
-                          className="notion-tasks-expand"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleExpand(t.id);
-                          }}
-                          title={isExpanded ? tt("collapseSub", lang) : tt("expandSub", lang)}
-                          aria-expanded={isExpanded}
-                        >
-                          {isExpanded ? "▾" : "▸"}
-                        </button>
-                        <span
-                          className="notion-tasks-text"
-                          onClick={() => handleOpenFile(t.file)}
-                        >
-                          {t.basename}
-                        </span>
-                        {totalSec > 0 && (
-                          <span className="notion-tasks-time-inline" title={isCurrent ? tt("timing", lang) : tt("total", lang)}>
-                            {isCurrent ? "🔴" : "⏱️"} {formatHM(totalSec * 1000)}
-                          </span>
-                        )}
-                      </div>
-                      <div className="notion-tasks-line-meta">
-                        <PriorityEditor
-                          value={t.priority}
-                          onChange={(p) => handleSetPriority(t, p)}
-                        />
-                        <span className="notion-tasks-meta-dot">·</span>
-                        <DateEditor
-                          label="🛫"
-                          value={t.start}
-                          onChange={(v) => handleSetDate(t, "start", v)}
-                        />
-                        <DateEditor
-                          label="📅"
-                          value={t.completionDate}
-                          onChange={(v) => handleSetDate(t, "completionDate", v)}
-                          overdueCheck={t.status === "Doing" || t.status === "Prepare"}
-                        />
-                        {t.completionDate && (
-                          <span className={`notion-tasks-due-info ${t.completionDate < today() && (t.status === "Doing" || t.status === "Prepare") ? "is-overdue" : ""} ${t.completionDate === today() ? "is-today" : ""}`}>
-                            {relativeDate(t.completionDate)}
-                          </span>
-                        )}
-                        {t.tags.length > 0 && (
-                          <span className="notion-tasks-meta-dot">·</span>
-                        )}
-                        {t.tags.slice(0, 3).map((tag) => (
-                          <span key={tag} className="notion-tasks-tag-chip-sm">#{tag}</span>
-                        ))}
-                        {t.tags.length > 3 && (
-                          <span className="notion-tasks-tag-more">+{t.tags.length - 3}</span>
-                        )}
-                        <button
-                          className="notion-tasks-tag-add-sm"
-                          onClick={() => {
-                            const tag = window.prompt(tt("addTagPrompt", lang));
-                            if (tag) handleAddTag(t, tag);
-                          }}
-                          title={tt("addTagTitle", lang)}
-                        >+</button>
-                      </div>
-                    </div>
-                    <div className="notion-tasks-actions">
-                      {mods.timer && (
-                        <TimeAdjustMenu
-                          task={t}
-                          isCurrent={isCurrent}
-                          currentElapsedMs={isCurrent ? plugin.timeTracker.getElapsedMs() : 0}
-                          onToggleTimer={handleToggleTime}
-                          onAdjust={handleAdjustTime}
-                          onSet={handleSetTime}
-                          variant="button"
-                        />
-                      )}
-                    </div>
-                    {isExpanded && (
-                      <div className="notion-tasks-subs">
-                        <SubTaskList
-                          file={t.file as any}
-                          service={plugin.subTaskService}
-                        />
-                      </div>
-                    )}
-                  </div>
-                );
-              })
-            )}
-          </div>
+          sorted.length === 0 ? (
+            <div className="notion-tasks-empty">
+              {filterStatus === "Done" ? tt("emptyDone", lang) : tt("emptyFilter", lang)}
+            </div>
+          ) : (
+            <TaskTable
+              tasks={sorted}
+              app={plugin.app}
+              currentTimerTaskId={plugin.timeTracker.getCurrent()?.taskId}
+              currentTimerElapsedMs={plugin.timeTracker.getElapsedMs()}
+              onSetStatus={handleSetStatus}
+              onCycleStatus={handleCycleStatus}
+              onSetPriority={handleSetPriority}
+              onSetDate={handleSetDate}
+              onAddTag={handleAddTag}
+              onRemoveTag={handleRemoveTag}
+              onToggleTimer={handleToggleTime}
+              onAdjustTime={handleAdjustTime}
+              onSetTime={handleSetTime}
+              expandedIds={expandedIds}
+              onToggleExpand={toggleExpand}
+              subTaskService={plugin.subTaskService}
+              language={lang}
+              editingDate={editingDate}
+              onEditDate={(taskId, which) => setEditingDate({ taskId, which })}
+              onCancelEditDate={() => setEditingDate(null)}
+            />
+          )
         )
       )}
 

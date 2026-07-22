@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.1] - 2026-07-22
+
+### Added
+- **Notion-style task table** — `TaskTable` component with real `<table>` layout, column-aligned properties (name / status / priority / start / due / tags / time / action), inline editing of dates, tags, priority, status cycling
+- **`Pills` component** — `StatusPill` / `PriorityPill` / `TagChip` reusable across all 3 views, with stable per-tag colors
+- **Bilingual sync across views** — language toggle in both Home and Tasks views; change in one reflects immediately in the other via a `languageListeners` pub/sub
+- **Home page adaptive width** — `max-width: 1400px`, single column < 720px; two-column break point adjusted
+- **Pie chart mode switcher** — inline `状态 / tags / 任务` tab in Home (no need to go to settings)
+
+### Changed
+- **Pie chart color palette** — replaced ugly brownish/amber tones with 18 soft Notion-style colors; **sequential color assignment with collision avoidance** so 2 tasks with hash-collision no longer share the same color
+- **Status / Priority / Tags UI** in all 3 views now use Notion-style pills (dot + bg + bold text) instead of plain text
+- **List view label** renamed to "Table" (internal `viewMode === "list"` unchanged for backward compat)
+
+### Fixed
+- Avatar no longer clipped by banner `overflow: hidden` (separate clip layer)
+- Pie chart color: removed all brown/amber/brick-red tones; small "屎黄" issue gone
+- Multi-tag task time is now split equally across all tags in pie chart
+
 ## [0.7.0] - 2026-07-22
 
 ### Added

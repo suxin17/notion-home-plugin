@@ -2,7 +2,7 @@
 
 A Notion-style homepage and lightweight task manager for Obsidian. Each task is a single `.md` file, with metadata in frontmatter and progress tracked automatically via the plugin's built-in timer.
 
-> [中文文档 (Chinese)](README.zh.md) · v0.7.0
+> [中文文档 (Chinese)](README.zh.md) · v0.7.1
 
 ![Home screenshot](docs/screenshot.png)
 
@@ -151,7 +151,25 @@ Copy-Item main.js, styles.css, manifest.json -Destination $dest -Force
 
 ## 🗺 Changelog
 
-### v0.7.0 (current)
+### v0.7.1 (current)
+
+**Added**
+- **Notion-style task table** — real `<table>` with column-aligned properties (name / status / priority / start / due / tags / time / action); inline editing of dates, tags, priority, status cycling
+- **Pills component** — `StatusPill` / `PriorityPill` / `TagChip` reusable across all 3 views, with stable per-tag colors
+- **Bilingual sync across views** — language toggle in Home and Tasks; change in one reflects immediately in the other
+- **Home adaptive width** — `max-width: 1400px`, single column < 720px
+- **Pie chart mode switcher** — inline `By Status / By Tags / By Task` tab in Home
+
+**Changed**
+- **Pie chart palette** — replaced brownish/amber tones with 18 soft Notion-style colors; **sequential color assignment with collision avoidance** so hash-collisions no longer share color
+- **List view label** renamed to "Table" (internal `viewMode === "list"` unchanged for backward compat)
+- All status/priority/tags UI now use Notion-style pills
+
+**Fixed**
+- Avatar no longer clipped by banner `overflow: hidden` (separate clip layer)
+- Pie chart no more "屎黄" / brown / brick tones
+
+### v0.7.0
 
 **Added**
 - **Sub-task list** — expand/collapse inside any task in List / Board / Gantt; toggle checkboxes writes back to file

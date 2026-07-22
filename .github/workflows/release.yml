@@ -1,0 +1,72 @@
+name: Release Obsidian plugin
+
+on:
+  push:
+    tags:
+      - "*"
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Validate manifest & versions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Validate JSON files
+        run: |
+          node -e "JSON.parse(require('fs').readFileSync('manifest.json','utf8'))"
+          node -e "JSON.parse(require('fs').readFileSync('versions.json','utf8'))"
+      - name: Check manifest version exists in versions.json
+        run: |
+          node -e "
+          const m = require('./manifest.json');
+          const v = require('./versions.json');
+          if (!v[m.version]) throw new Error('manifest version ' + m.version + ' missing in versions.json');
+          console.log('OK: version ' + m.version + ' → minApp ' + v[m.version]);
+          "
+
+  build:
+    name: Build & release
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npx tsc --noEmit
+
+      - name: Build
+        run: npm run build
+
+      - name: Verify build artifacts
+        run: |
+          for f in main.js manifest.json styles.css; do
+            if [ ! -f "$f" ]; then echo "Missing $f"; exit 1; fi
+            echo "✓ $f ($(stat -c%s $f) bytes)"
+          done
+
+      - name: Create GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "v${{ github.ref_name }}"
+          generate_release_notes: true
+          files: |
+            main.js
+            manifest.json
+            styles.css
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

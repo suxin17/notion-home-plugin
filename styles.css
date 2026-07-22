@@ -1,0 +1,3401 @@
+/* Notion 风格 Home & Tasks 样式
+ * 浅色为主，融入 Obsidian 主题变量，dark/light 都好看
+ */
+
+/* ============== Home ============== */
+
+.notion-home-container,
+.notion-tasks-container {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.notion-home {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 24px 96px;
+  font-size: 15px;
+  color: var(--text-normal);
+  box-sizing: border-box;
+}
+
+.notion-home-hero {
+  margin-bottom: 28px;
+  padding: 8px 4px;
+  position: relative;
+  z-index: 2;
+}
+
+.notion-home-card {
+  background: transparent;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  padding: 14px 18px;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.notion-home-card:hover {
+  border-color: var(--background-modifier-border-hover);
+  background: var(--background-secondary);
+}
+
+.notion-home-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.notion-home-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-normal);
+  letter-spacing: 0.01em;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.notion-home-card-icon {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.notion-home-card-action {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.notion-home-card-action:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.notion-home-hint {
+  font-size: 11px;
+  color: var(--text-faint);
+}
+
+/* 任务统计 */
+.notion-home-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.notion-home-stat {
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  padding: 14px 12px;
+  text-align: center;
+}
+
+.notion-home-stat-num {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-normal);
+  line-height: 1.1;
+}
+
+.notion-home-stat-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.notion-home-stat-warn .notion-home-stat-num {
+  color: var(--text-accent);
+}
+
+.notion-home-stat-danger .notion-home-stat-num {
+  color: #e03e3e;
+}
+
+.notion-home-mini-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--background-modifier-border);
+  padding-top: 8px;
+}
+
+.notion-home-mini-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 14px;
+  color: var(--text-normal);
+}
+
+.notion-home-mini-prio {
+  font-size: 12px;
+}
+
+.notion-home-mini-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.notion-home-mini-due {
+  font-size: 12px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+/* 快速创建 */
+.notion-home-quick {
+  display: flex;
+  gap: 8px;
+}
+
+.notion-home-quick-input {
+  flex: 1;
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 14px;
+  color: var(--text-normal);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.notion-home-quick-input:focus {
+  border-color: var(--interactive-accent);
+}
+
+.notion-home-quick-btn {
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  border: none;
+  border-radius: 8px;
+  padding: 9px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.notion-home-quick-btn:hover {
+  background: var(--interactive-accent-hover);
+}
+
+.notion-home-quick-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* 快速创建的 prefix 提示 */
+.notion-home-quick-hints {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 10px;
+  color: var(--text-faint);
+  flex-wrap: wrap;
+}
+
+.notion-home-quick-hint {
+  display: inline-block;
+  padding: 2px 7px;
+  background: var(--background-secondary);
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-family: var(--font-monospace);
+  font-size: 10px;
+  letter-spacing: 0.2px;
+}
+
+.notion-home-quick-actions button {
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.notion-home-quick-actions button:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.notion-home-empty {
+  font-size: 13px;
+  color: var(--text-faint);
+  padding: 8px 0;
+}
+
+/* 最近笔记 */
+.notion-home-recent {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.notion-home-recent-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 10px;
+  margin: 0 -10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.notion-home-recent-item:hover {
+  background: var(--background-modifier-hover);
+}
+
+.notion-home-recent-name {
+  font-size: 14px;
+  color: var(--text-normal);
+  font-weight: 500;
+}
+
+.notion-home-recent-meta {
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+/* ============== Tasks ============== */
+
+.notion-tasks {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  font-size: 14px;
+}
+
+.notion-tasks-toolbar {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  background: var(--background-secondary);
+  flex-shrink: 0;
+}
+
+.notion-tasks-search {
+  width: 100%;
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 13px;
+  color: var(--text-normal);
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.notion-tasks-search:focus {
+  border-color: var(--interactive-accent);
+}
+
+.notion-tasks-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.notion-tasks-filters button {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  padding: 3px 9px;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.notion-tasks-filters button:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.notion-tasks-filters button.active {
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+}
+
+.notion-tasks-sep {
+  color: var(--background-modifier-border);
+  margin: 0 4px;
+}
+
+.notion-tasks-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.notion-tasks-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-faint);
+  font-size: 13px;
+}
+
+.notion-tasks-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  transition: background 0.1s;
+}
+
+.notion-tasks-item:hover {
+  background: var(--background-modifier-hover);
+}
+
+.notion-tasks-check {
+  margin-top: 3px;
+  cursor: pointer;
+  flex-shrink: 0;
+  width: 15px;
+  height: 15px;
+}
+
+.notion-tasks-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.notion-tasks-text {
+  font-size: 14px;
+  color: var(--text-normal);
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.notion-tasks-item.is-done .notion-tasks-text {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.notion-tasks-item.prio-high {
+  border-left: 3px solid #e03e3e;
+  padding-left: 11px;
+}
+
+.notion-tasks-item.prio-medium {
+  border-left: 3px solid var(--text-accent);
+  padding-left: 11px;
+}
+
+.notion-tasks-item.prio-low {
+  border-left: 3px solid var(--text-faint);
+  padding-left: 11px;
+}
+
+.notion-tasks-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--text-muted);
+  align-items: center;
+}
+
+.notion-tasks-due {
+  font-size: 11px;
+}
+
+.notion-tasks-due.is-overdue {
+  color: #e03e3e;
+  font-weight: 600;
+}
+
+.notion-tasks-due.is-today {
+  color: var(--text-accent);
+  font-weight: 600;
+}
+
+.notion-tasks-file {
+  cursor: pointer;
+  transition: color 0.12s;
+}
+
+.notion-tasks-file:hover {
+  color: var(--text-accent);
+  text-decoration: underline;
+}
+
+.notion-tasks-section {
+  color: var(--text-faint);
+}
+
+.notion-tasks-tag {
+  background: var(--background-modifier-border);
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+}
+
+.muted {
+  color: var(--text-faint);
+}
+
+/* 新增任务输入条 */
+.notion-tasks-add {
+  border-top: 1px solid var(--background-modifier-border);
+  padding: 10px 14px;
+  background: var(--background-secondary);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.notion-tasks-add-input {
+  flex: 1;
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 13px;
+  color: var(--text-normal);
+  outline: none;
+  min-width: 0;
+}
+
+.notion-tasks-add-input:focus {
+  border-color: var(--interactive-accent);
+}
+
+.notion-tasks-add select,
+.notion-tasks-add input[type="date"] {
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 12px;
+  color: var(--text-normal);
+  outline: none;
+  flex-shrink: 0;
+}
+
+.notion-tasks-add select:focus,
+.notion-tasks-add input[type="date"]:focus {
+  border-color: var(--interactive-accent);
+}
+
+/* ============== View Tabs (List / Gantt) ============== */
+.notion-tasks-toolbar-top {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.notion-tasks-toolbar-top .notion-tasks-search {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.notion-tasks-viewtabs {
+  display: flex;
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.notion-tasks-viewtabs button {
+  background: transparent;
+  border: none;
+  padding: 5px 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.12s;
+  border-radius: 0;
+}
+
+.notion-tasks-viewtabs button:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.notion-tasks-viewtabs button.active {
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+}
+
+.notion-tasks-viewtabs button + button {
+  border-left: 1px solid var(--background-modifier-border);
+}
+
+.notion-tasks-viewtabs button.active + button,
+.notion-tasks-viewtabs button + button.active {
+  border-left-color: transparent;
+}
+
+/* ============== Gantt ============== */
+
+.notion-gantt {
+  flex: 1;
+  overflow: auto;
+  background: var(--background-primary);
+  position: relative;
+}
+
+.notion-gantt-scroll {
+  position: relative;
+  min-height: 100%;
+}
+
+.notion-gantt-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--background-secondary);
+  border-bottom: 1px solid var(--background-modifier-border);
+  height: 56px;
+}
+
+.notion-gantt-header-ticks {
+  position: relative;
+  margin-left: 0;
+}
+
+/* ===== 时间线 toolbar（顶部 tab + hint） ===== */
+.notion-gantt-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 0 10px 0;
+  flex-wrap: wrap;
+}
+
+.notion-gantt-hint {
+  font-size: 11px;
+  color: var(--text-faint);
+  font-style: italic;
+}
+
+/* ===== 时间线 header 顶部行（统一容器） ===== */
+.notion-gantt-header-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 28px;
+}
+
+.notion-gantt-header-weekday {
+  position: absolute;
+  top: 0;
+  height: 28px;
+  line-height: 28px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-align: center;
+  border-left: 1px solid var(--background-modifier-border);
+}
+
+.notion-gantt-header-year {
+  position: absolute;
+  top: 0;
+  height: 28px;
+  line-height: 28px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-normal);
+  padding: 0 10px;
+  border-left: 2px solid var(--text-accent);
+  background: var(--background-secondary);
+}
+
+/* ===== clipped bar（被范围裁剪的任务 bar） ===== */
+.notion-gantt-bar-wrap.is-clipped .notion-gantt-bar {
+  opacity: 0.55;
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 4px,
+    rgba(0, 0, 0, 0.05) 4px,
+    rgba(0, 0, 0, 0.05) 8px
+  );
+}
+
+/* ===== Sub-task 展开（三个视图共用） ===== */
+.notion-subtasks {
+  padding: 8px 4px 4px 4px;
+  font-size: 12px;
+}
+
+.notion-subtasks-loading,
+.notion-subtasks-empty {
+  padding: 6px 8px;
+  font-size: 11px;
+  color: var(--text-faint);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.notion-subtasks-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  padding: 0 4px;
+}
+
+.notion-subtasks-progress-bar {
+  flex: 1;
+  height: 4px;
+  background: var(--background-modifier-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.notion-subtasks-progress-fill {
+  height: 100%;
+  background: var(--interactive-accent);
+  transition: width 0.2s;
+}
+
+.notion-subtasks-progress-text {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.notion-subtasks-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.notion-subtasks-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 4px 2px 4px;
+  border-radius: 4px;
+  position: relative;
+  line-height: 1.6;
+}
+
+.notion-subtasks-item:hover {
+  background: var(--background-modifier-hover);
+}
+
+.notion-subtasks-item.is-done .notion-subtasks-text {
+  color: var(--text-faint);
+  text-decoration: line-through;
+}
+
+.notion-subtasks-check {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid var(--text-muted);
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-on-accent);
+  background: transparent;
+  transition: background 0.1s, border-color 0.1s;
+  user-select: none;
+}
+
+.notion-subtasks-check:hover {
+  border-color: var(--interactive-accent);
+}
+
+.notion-subtasks-item.is-done .notion-subtasks-check {
+  background: var(--interactive-accent);
+  border-color: var(--interactive-accent);
+}
+
+.notion-subtasks-text {
+  flex: 1;
+  cursor: pointer;
+  user-select: none;
+  word-break: break-word;
+}
+
+.notion-subtasks-remove {
+  flex-shrink: 0;
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: var(--text-faint);
+  cursor: pointer;
+  padding: 0 4px;
+  font-size: 14px;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.1s, color 0.1s;
+}
+
+.notion-subtasks-item:hover .notion-subtasks-remove {
+  opacity: 1;
+}
+
+.notion-subtasks-remove:hover {
+  color: var(--text-accent);
+}
+
+.notion-subtasks-add-btn {
+  appearance: none;
+  background: transparent;
+  border: 1px dashed var(--background-modifier-border);
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  margin-top: 6px;
+  margin-left: 4px;
+  transition: background 0.1s, border-color 0.1s, color 0.1s;
+}
+
+.notion-subtasks-add-btn:hover {
+  background: var(--background-modifier-hover);
+  border-color: var(--interactive-accent);
+  color: var(--text-normal);
+}
+
+.notion-subtasks-add-form {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+  margin-left: 4px;
+}
+
+.notion-subtasks-add-input {
+  flex: 1;
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  color: var(--text-normal);
+  outline: none;
+}
+
+.notion-subtasks-add-input:focus {
+  border-color: var(--interactive-accent);
+}
+
+/* ===== List 视图的 expand 按钮 + sub-task 容器 ===== */
+.notion-tasks-expand {
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: var(--text-faint);
+  cursor: pointer;
+  padding: 0 4px;
+  font-size: 12px;
+  line-height: 1;
+  border-radius: 3px;
+  transition: color 0.1s, background 0.1s;
+}
+
+.notion-tasks-expand:hover {
+  color: var(--text-normal);
+  background: var(--background-modifier-hover);
+}
+
+.notion-tasks-item.is-expanded {
+  flex-wrap: wrap;
+  padding-bottom: 4px;
+}
+
+.notion-tasks-subs {
+  flex: 1 0 100%;
+  margin-top: 8px;
+  padding-left: 32px;
+  border-top: 1px dashed var(--background-modifier-border);
+  padding-top: 4px;
+}
+
+/* ===== Board 视图的 expand 按钮 + sub-task 容器 ===== */
+.notion-board-card-expand {
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: var(--text-faint);
+  cursor: pointer;
+  padding: 0 4px;
+  font-size: 11px;
+  line-height: 1;
+  margin-left: auto;
+  border-radius: 3px;
+  transition: color 0.1s, background 0.1s;
+}
+
+.notion-board-card-expand:hover {
+  color: var(--text-normal);
+  background: var(--background-modifier-hover);
+}
+
+.notion-board-card.is-expanded {
+  flex-wrap: wrap;
+}
+
+.notion-board-card-subs {
+  flex: 1 0 100%;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--background-modifier-border);
+}
+
+/* ===== Gantt 视图的 expand 按钮 + sub-task 抽屉 ===== */
+.notion-gantt-expand {
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: var(--text-faint);
+  cursor: pointer;
+  padding: 0 4px;
+  font-size: 10px;
+  line-height: 1;
+  border-radius: 3px;
+  transition: color 0.1s, background 0.1s;
+  flex-shrink: 0;
+}
+
+.notion-gantt-expand:hover {
+  color: var(--text-normal);
+  background: var(--background-modifier-hover);
+}
+
+.notion-gantt-row-subs {
+  display: flex;
+  background: var(--background-secondary);
+  border-bottom: 1px solid var(--background-modifier-border);
+  padding: 6px 0;
+  min-height: 40px;
+}
+
+.notion-gantt-row-subs-inner {
+  padding-left: 12px;
+}
+
+.notion-gantt-header-months {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 28px;
+}
+
+.notion-gantt-header-month {
+  position: absolute;
+  top: 0;
+  height: 28px;
+  line-height: 28px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 0 8px;
+  border-left: 1px solid var(--background-modifier-border);
+  background: var(--background-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.notion-gantt-header-days {
+  position: absolute;
+  left: 0;
+  height: 28px;
+  display: flex;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.notion-gantt-header-day {
+  flex-shrink: 0;
+  height: 28px;
+  line-height: 28px;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+  border-left: 1px solid var(--background-modifier-border);
+  font-variant-numeric: tabular-nums;
+}
+
+.notion-gantt-header-day.is-month-start {
+  border-left: 2px solid var(--text-accent);
+}
+
+.notion-gantt-header-day.is-today {
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  font-weight: 700;
+}
+
+.notion-gantt-header-day.is-weekend {
+  background: var(--background-modifier-border);
+  opacity: 0.4;
+}
+
+.notion-gantt-group {
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.notion-gantt-group-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: 12px;
+  padding-bottom: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--background-primary);
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.notion-gantt-group-icon {
+  font-size: 11px;
+}
+
+.notion-gantt-group-name {
+  cursor: pointer;
+  color: var(--text-normal);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 13px;
+  font-weight: 600;
+  transition: color 0.12s;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 180px;
+}
+
+.notion-gantt-group-name:hover {
+  color: var(--text-accent);
+  text-decoration: underline;
+}
+
+.notion-gantt-group-count {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-faint);
+  background: var(--background-modifier-border);
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-right: 12px;
+}
+
+.notion-gantt-row {
+  display: flex;
+  position: relative;
+  border-bottom: 1px solid var(--background-modifier-border);
+  align-items: center;
+}
+
+.notion-gantt-row:hover {
+  background: var(--background-modifier-hover);
+}
+
+.notion-gantt-row-label {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  background: inherit;
+  border-right: 1px solid var(--background-modifier-border);
+  flex-shrink: 0;
+  font-size: 13px;
+}
+
+.notion-gantt-row-check {
+  width: 13px;
+  height: 13px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.notion-gantt-row-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+  color: var(--text-normal);
+  min-width: 0;
+}
+
+.notion-gantt-row.is-done .notion-gantt-row-text,
+.notion-gantt-row.is-done .notion-gantt-bar {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+
+.notion-gantt-row-label.prio-high {
+  border-left: 3px solid #e03e3e;
+}
+
+.notion-gantt-row-label.prio-medium {
+  border-left: 3px solid var(--text-accent);
+}
+
+.notion-gantt-row-label.prio-low {
+  border-left: 3px solid var(--text-faint);
+}
+
+.notion-gantt-prio {
+  font-size: 11px;
+  flex-shrink: 0;
+  padding-right: 4px;
+}
+
+.notion-gantt-row-bars {
+  position: relative;
+  height: 100%;
+  flex-shrink: 0;
+}
+
+.notion-gantt-weekend {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: var(--background-modifier-border);
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+.notion-gantt-bar-wrap {
+  position: absolute;
+  top: 6px;
+  height: 20px;
+}
+
+.notion-gantt-bar {
+  height: 100%;
+  background: var(--interactive-accent);
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  font-size: 10px;
+  color: var(--text-on-accent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+  transition: filter 0.12s, transform 0.12s;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+.notion-gantt-bar:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.notion-gantt-bar.prio-high {
+  background: #e03e3e;
+  color: white;
+}
+
+.notion-gantt-bar.prio-medium {
+  background: var(--text-accent);
+}
+
+.notion-gantt-bar.prio-low {
+  background: var(--text-muted);
+  color: var(--text-on-accent);
+}
+
+.notion-gantt-bar.is-done {
+  background: #4caf50 !important;
+  color: white;
+}
+
+.notion-gantt-bar.is-overdue {
+  box-shadow: 0 0 0 2px #e03e3e, inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+  animation: notion-gantt-pulse 2s ease-in-out infinite;
+}
+
+.notion-gantt-bar.is-today {
+  box-shadow: 0 0 0 2px var(--text-accent);
+}
+
+@keyframes notion-gantt-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px #e03e3e, inset 0 0 0 1px rgba(0, 0, 0, 0.1); }
+  50% { box-shadow: 0 0 0 2px #e03e3e, 0 0 8px #e03e3e, inset 0 0 0 1px rgba(0, 0, 0, 0.1); }
+}
+
+.notion-gantt-bar-label {
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.notion-gantt-today-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  border-left: 2px dashed var(--interactive-accent);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.notion-gantt-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.notion-gantt-empty-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-normal);
+  margin-bottom: 8px;
+}
+
+.notion-gantt-empty-hint {
+  font-size: 13px;
+  max-width: 420px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.notion-gantt-empty-example {
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+.notion-gantt-empty code {
+  background: var(--background-modifier-border);
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-family: var(--font-monospace);
+}
+
+/* ============== Timer (TaskView) ============== */
+
+.notion-tasks-timer-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: linear-gradient(90deg, rgba(224, 62, 62, 0.08), rgba(255, 152, 0, 0.06));
+  border-bottom: 1px solid rgba(224, 62, 62, 0.25);
+  font-size: 13px;
+  color: var(--text-normal);
+  flex-shrink: 0;
+}
+
+.notion-tasks-timer-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e03e3e;
+  box-shadow: 0 0 0 0 rgba(224, 62, 62, 0.7);
+  animation: notion-tasks-pulse 1.5s infinite;
+  flex-shrink: 0;
+}
+
+@keyframes notion-tasks-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(224, 62, 62, 0.7); }
+  50% { box-shadow: 0 0 0 6px rgba(224, 62, 62, 0); }
+}
+
+.notion-tasks-timer-icon {
+  font-size: 14px;
+}
+
+.notion-tasks-timer-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.notion-tasks-timer-elapsed {
+  font-family: var(--font-monospace);
+  font-weight: 600;
+  color: #e03e3e;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.notion-tasks-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.notion-tasks-item.is-timing {
+  background: rgba(224, 62, 62, 0.04);
+  border-left: 3px solid #e03e3e;
+  padding-left: 11px;
+}
+
+.notion-tasks-time {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-monospace);
+}
+
+.notion-tasks-item.is-timing .notion-tasks-time {
+  color: #e03e3e;
+  font-weight: 600;
+}
+
+.notion-tasks-timer-btn {
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  color: var(--text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.12s;
+  white-space: nowrap;
+}
+
+.notion-tasks-timer-btn:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.notion-tasks-timer-btn.is-current {
+  background: #e03e3e;
+  color: white;
+  border-color: #e03e3e;
+  font-weight: 500;
+  animation: notion-tasks-pulse-soft 1.5s ease-in-out infinite;
+}
+
+.notion-tasks-timer-btn.is-current:hover {
+  background: #c93434;
+  color: white;
+}
+
+@keyframes notion-tasks-pulse-soft {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(224, 62, 62, 0.3); }
+  50% { box-shadow: 0 0 0 4px rgba(224, 62, 62, 0); }
+}
+
+/* ============== Heatmap (Home) ============== */
+
+/* ===== 语言切换按钮（hero 区右侧） ===== */
+.notion-home-hero-wrap {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.notion-lang-toggle {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  background: var(--background-secondary);
+  border-radius: 6px;
+  font-size: 12px;
+  flex-shrink: 0;
+  margin-top: 8px;
+  user-select: none;
+}
+
+.notion-lang-btn {
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  line-height: 1.4;
+  min-width: 32px;
+}
+
+.notion-lang-btn:hover {
+  color: var(--text-normal);
+}
+
+.notion-lang-btn.is-active {
+  background: var(--background-primary);
+  color: var(--text-normal);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  font-weight: 600;
+}
+
+.theme-dark .notion-lang-btn.is-active {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== 统计周期 tab 控件 ===== */
+.notion-stat-tabs {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  background: var(--background-secondary);
+  border-radius: 6px;
+  font-size: 11px;
+  user-select: none;
+}
+
+.notion-stat-tab {
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 3px 10px;
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  line-height: 1.4;
+}
+
+.notion-stat-tab:hover {
+  color: var(--text-normal);
+}
+
+.notion-stat-tab.is-active {
+  background: var(--background-primary);
+  color: var(--text-normal);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  font-weight: 600;
+}
+
+.theme-dark .notion-stat-tab.is-active {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== 范围外的热力图格子（本月/本年 视图中，前后月/年的占位格） ===== */
+.notion-heatmap-cell.out-of-range {
+  opacity: 0.18;
+  background: var(--background-modifier-border) !important;
+  box-shadow: none !important;
+}
+
+.notion-heatmap-cell.out-of-range:hover {
+  transform: none;
+  outline: none;
+}
+
+.notion-heatmap {
+  margin-top: 4px;
+}
+
+.notion-heatmap-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.notion-heatmap-stats {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.notion-heatmap-stat b {
+  color: var(--text-normal);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.notion-heatmap-legend {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  color: var(--text-faint);
+}
+
+.notion-heatmap-grid {
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.notion-heatmap-months {
+  position: relative;
+}
+
+.notion-heatmap-month {
+  position: absolute;
+  top: 0;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.notion-heatmap-body {
+  display: flex;
+  align-items: flex-start;
+}
+
+.notion-heatmap-weekdays {
+  display: flex;
+  flex-direction: column;
+  padding-top: 0;
+}
+
+.notion-heatmap-weekday {
+  font-size: 10px;
+  color: var(--text-faint);
+  text-align: right;
+  padding-right: 4px;
+}
+
+.notion-heatmap-weekday[data-show="false"] {
+  visibility: hidden;
+}
+
+.notion-heatmap-cells {
+  display: flex;
+  flex-direction: row;
+}
+
+.notion-heatmap-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.notion-heatmap-cell {
+  border-radius: 3px;
+  transition: transform 0.1s;
+  cursor: default;
+}
+
+.notion-heatmap-cell:hover {
+  transform: scale(1.3);
+  outline: 1.5px solid var(--text-accent);
+  z-index: 2;
+}
+
+/* ===== 默认配色：蓝色 ===== */
+.notion-heatmap-cell.is-level-0 {
+  background: var(--background-modifier-border);
+  opacity: 0.6;
+}
+
+.notion-heatmap-cell.is-level-1 {
+  background: rgba(110, 168, 254, 0.35);
+}
+
+.notion-heatmap-cell.is-level-2 {
+  background: rgba(110, 168, 254, 0.6);
+}
+
+.notion-heatmap-cell.is-level-3 {
+  background: rgba(110, 168, 254, 0.85);
+}
+
+.notion-heatmap-cell.is-level-4 {
+  background: rgb(110, 168, 254);
+  box-shadow: 0 0 0 1px rgba(110, 168, 254, 0.3);
+}
+
+.theme-dark .notion-heatmap-cell.is-level-1 { background: rgba(110, 168, 254, 0.25); }
+.theme-dark .notion-heatmap-cell.is-level-2 { background: rgba(110, 168, 254, 0.45); }
+.theme-dark .notion-heatmap-cell.is-level-3 { background: rgba(110, 168, 254, 0.7); }
+.theme-dark .notion-heatmap-cell.is-level-4 { background: rgb(110, 168, 254); }
+
+/* ===== 绿色变体 ===== */
+.notion-heatmap.is-palette-green .notion-heatmap-cell.is-level-1 { background: rgba(110, 200, 130, 0.35); }
+.notion-heatmap.is-palette-green .notion-heatmap-cell.is-level-2 { background: rgba(110, 200, 130, 0.6); }
+.notion-heatmap.is-palette-green .notion-heatmap-cell.is-level-3 { background: rgba(110, 200, 130, 0.85); }
+.notion-heatmap.is-palette-green .notion-heatmap-cell.is-level-4 { background: rgb(110, 200, 130); box-shadow: 0 0 0 1px rgba(110, 200, 130, 0.3); }
+.theme-dark .notion-heatmap.is-palette-green .notion-heatmap-cell.is-level-1 { background: rgba(110, 200, 130, 0.25); }
+.theme-dark .notion-heatmap.is-palette-green .notion-heatmap-cell.is-level-2 { background: rgba(110, 200, 130, 0.45); }
+.theme-dark .notion-heatmap.is-palette-green .notion-heatmap-cell.is-level-3 { background: rgba(110, 200, 130, 0.7); }
+.theme-dark .notion-heatmap.is-palette-green .notion-heatmap-cell.is-level-4 { background: rgb(110, 200, 130); }
+
+/* ===== 紫色变体 ===== */
+.notion-heatmap.is-palette-purple .notion-heatmap-cell.is-level-1 { background: rgba(170, 120, 240, 0.35); }
+.notion-heatmap.is-palette-purple .notion-heatmap-cell.is-level-2 { background: rgba(170, 120, 240, 0.6); }
+.notion-heatmap.is-palette-purple .notion-heatmap-cell.is-level-3 { background: rgba(170, 120, 240, 0.85); }
+.notion-heatmap.is-palette-purple .notion-heatmap-cell.is-level-4 { background: rgb(170, 120, 240); box-shadow: 0 0 0 1px rgba(170, 120, 240, 0.3); }
+.theme-dark .notion-heatmap.is-palette-purple .notion-heatmap-cell.is-level-1 { background: rgba(170, 120, 240, 0.25); }
+.theme-dark .notion-heatmap.is-palette-purple .notion-heatmap-cell.is-level-2 { background: rgba(170, 120, 240, 0.45); }
+.theme-dark .notion-heatmap.is-palette-purple .notion-heatmap-cell.is-level-3 { background: rgba(170, 120, 240, 0.7); }
+.theme-dark .notion-heatmap.is-palette-purple .notion-heatmap-cell.is-level-4 { background: rgb(170, 120, 240); }
+
+/* ===== 橙色变体 ===== */
+.notion-heatmap.is-palette-orange .notion-heatmap-cell.is-level-1 { background: rgba(255, 168, 80, 0.35); }
+.notion-heatmap.is-palette-orange .notion-heatmap-cell.is-level-2 { background: rgba(255, 168, 80, 0.6); }
+.notion-heatmap.is-palette-orange .notion-heatmap-cell.is-level-3 { background: rgba(255, 168, 80, 0.85); }
+.notion-heatmap.is-palette-orange .notion-heatmap-cell.is-level-4 { background: rgb(255, 168, 80); box-shadow: 0 0 0 1px rgba(255, 168, 80, 0.3); }
+.theme-dark .notion-heatmap.is-palette-orange .notion-heatmap-cell.is-level-1 { background: rgba(255, 168, 80, 0.25); }
+.theme-dark .notion-heatmap.is-palette-orange .notion-heatmap-cell.is-level-2 { background: rgba(255, 168, 80, 0.45); }
+.theme-dark .notion-heatmap.is-palette-orange .notion-heatmap-cell.is-level-3 { background: rgba(255, 168, 80, 0.7); }
+.theme-dark .notion-heatmap.is-palette-orange .notion-heatmap-cell.is-level-4 { background: rgb(255, 168, 80); }
+
+.notion-heatmap-empty {
+  padding: 24px 0;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.notion-heatmap-empty-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-normal);
+  margin-bottom: 6px;
+}
+
+.notion-heatmap-empty-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.notion-heatmap-empty-hint b {
+  color: var(--text-accent);
+  font-weight: 500;
+}
+
+/* ============== Settings Tab ============== */
+.notion-home-settings h3 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-normal);
+}
+
+.notion-home-settings .setting-item {
+  border-top: 1px solid var(--background-modifier-border);
+  padding: 12px 0;
+}
+
+.notion-home-settings .setting-item:last-child {
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.notion-home-settings .setting-item-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-normal);
+}
+
+.notion-home-settings .setting-item-description {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  line-height: 1.5;
+}
+
+.notion-home-settings select,
+.notion-home-settings input[type="number"] {
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 13px;
+  color: var(--text-normal);
+  outline: none;
+}
+
+.notion-home-settings select:focus,
+.notion-home-settings input[type="number"]:focus {
+  border-color: var(--interactive-accent);
+}
+
+.notion-home-settings-preview {
+  margin-top: 8px;
+  padding: 10px 12px;
+  background: var(--background-secondary);
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: var(--font-monospace);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.notion-home-settings-group {
+  margin: 12px 0 16px;
+  padding: 12px 14px 6px;
+  background: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+}
+
+.notion-home-settings-group h4 {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-normal);
+}
+
+.notion-home-settings-group .setting-item {
+  border-top: 1px solid var(--background-modifier-border);
+  padding: 8px 0;
+}
+
+.notion-home-empty-all {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}
+
+.notion-home-empty-all h2 {
+  font-size: 48px;
+  margin: 0 0 12px;
+  opacity: 0.5;
+}
+
+.notion-home-empty-all p {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+.notion-tasks-empty-all {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+  font-size: 40px;
+}
+
+.notion-tasks-empty-all p {
+  font-size: 14px;
+  margin: 4px 0;
+}
+
+/* ============== New Task List (Notion 风格 - 紧凑单行) ============== */
+
+.notion-tasks-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+  font-size: 14px;
+}
+
+.notion-tasks-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  margin: 0 -12px;
+  border-radius: 4px;
+  transition: background 0.08s;
+  position: relative;
+  min-height: 32px;
+}
+
+.notion-tasks-item:hover {
+  background: var(--background-modifier-hover);
+}
+
+.notion-tasks-item.is-done {
+  opacity: 0.55;
+}
+.notion-tasks-item.is-done .notion-tasks-text {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+.notion-tasks-item.is-abandon {
+  opacity: 0.45;
+}
+.notion-tasks-item.is-abandon .notion-tasks-text {
+  text-decoration: line-through;
+  color: var(--text-faint);
+  font-style: italic;
+}
+
+.notion-tasks-item.is-timing {
+  background: rgba(224, 62, 62, 0.06);
+}
+.notion-tasks-item.is-timing:hover {
+  background: rgba(224, 62, 62, 0.1);
+}
+
+.notion-tasks-body {
+  flex: 1;
+  min-width: 0;
+  line-height: 1.4;
+}
+
+/* 主行：标题 + 时间 */
+.notion-tasks-line-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.notion-tasks-text {
+  font-size: 14px;
+  color: var(--text-normal);
+  cursor: pointer;
+  transition: color 0.12s;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 400;
+}
+
+.notion-tasks-text:hover {
+  color: var(--text-accent);
+}
+
+.notion-tasks-time-inline {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-monospace);
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.notion-tasks-item.is-timing .notion-tasks-time-inline {
+  color: #e03e3e;
+  font-weight: 600;
+}
+
+/* meta 行：单行紧凑 */
+.notion-tasks-line-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.notion-tasks-meta-dot {
+  color: var(--text-faint);
+}
+
+.notion-tasks-tag-chip-sm {
+  display: inline-block;
+  background: var(--background-modifier-border);
+  color: var(--text-muted);
+  padding: 0 5px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-family: var(--font-monospace);
+  line-height: 16px;
+}
+
+.notion-tasks-tag-more {
+  color: var(--text-faint);
+  font-size: 10px;
+}
+
+.notion-tasks-tag-add-sm {
+  background: transparent;
+  border: 1px dashed transparent;
+  color: var(--text-faint);
+  border-radius: 3px;
+  width: 18px;
+  height: 16px;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.1s;
+}
+
+.notion-tasks-item:hover .notion-tasks-tag-add-sm {
+  border-color: var(--background-modifier-border);
+}
+
+.notion-tasks-tag-add-sm:hover {
+  border-color: var(--interactive-accent) !important;
+  color: var(--text-accent);
+}
+
+.notion-tasks-due-info {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.notion-tasks-due-info.is-overdue {
+  color: #e03e3e;
+  font-weight: 600;
+}
+
+.notion-tasks-due-info.is-today {
+  color: var(--text-accent);
+  font-weight: 600;
+}
+
+/* 操作按钮（hover 才高亮） */
+.notion-tasks-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.1s;
+  align-self: center;
+}
+
+.notion-tasks-item:hover .notion-tasks-actions {
+  opacity: 1;
+}
+
+.notion-tasks-item.is-timing .notion-tasks-actions {
+  opacity: 1;
+}
+
+.notion-tasks-timer-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  width: 26px;
+  height: 26px;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.12s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notion-tasks-timer-btn:hover {
+  background: var(--background-modifier-active-hover);
+  color: var(--text-normal);
+  border-color: var(--background-modifier-border);
+}
+
+.notion-tasks-timer-btn.is-current {
+  background: #e03e3e;
+  color: white;
+  border-color: #e03e3e;
+  font-weight: 600;
+  animation: notion-tasks-pulse-soft 1.5s ease-in-out infinite;
+}
+
+.notion-tasks-timer-btn.is-current:hover {
+  background: #c93434;
+  color: white;
+}
+
+/* Tag editor */
+.notion-tasks-tag-editor {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+  align-items: center;
+}
+
+.notion-tasks-tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--background-modifier-border);
+  border-radius: 3px;
+  padding: 1px 4px 1px 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-monospace);
+}
+
+.notion-tasks-tag-chip-remove {
+  background: none;
+  border: none;
+  color: var(--text-faint);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+  border-radius: 2px;
+}
+
+.notion-tasks-tag-chip-remove:hover {
+  background: var(--text-muted);
+  color: var(--background-primary);
+}
+
+.notion-tasks-tag-add {
+  background: none;
+  border: 1px dashed var(--background-modifier-border);
+  border-radius: 3px;
+  padding: 1px 6px;
+  font-size: 11px;
+  color: var(--text-faint);
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.notion-tasks-tag-add:hover {
+  border-color: var(--interactive-accent);
+  color: var(--text-accent);
+}
+
+.notion-tasks-tag-input {
+  background: var(--background-primary);
+  border: 1px solid var(--interactive-accent);
+  border-radius: 3px;
+  padding: 1px 6px;
+  font-size: 11px;
+  font-family: var(--font-monospace);
+  color: var(--text-normal);
+  outline: none;
+  width: 80px;
+}
+
+/* Priority editor - Notion 风格：紧凑 */
+.notion-tasks-priority-editor {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.notion-tasks-priority-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  padding: 0 4px;
+  font-size: 11px;
+  line-height: 16px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.1s;
+  white-space: nowrap;
+}
+
+.notion-tasks-priority-btn:hover {
+  background: var(--background-modifier-active-hover);
+  color: var(--text-normal);
+}
+
+.notion-tasks-priority-btn.is-high {
+  color: #e03e3e;
+}
+.notion-tasks-priority-btn.is-medium {
+  color: var(--text-accent);
+}
+.notion-tasks-priority-btn.is-low {
+  color: var(--text-faint);
+}
+
+.notion-tasks-priority-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 10;
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-top: 4px;
+  min-width: 80px;
+  overflow: hidden;
+}
+
+.notion-tasks-priority-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.notion-tasks-priority-option:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.notion-tasks-priority-option.is-active {
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+}
+
+/* Date editor - Notion 风格：极简 */
+.notion-tasks-date-editor {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.notion-tasks-date-editor.is-overdue .notion-tasks-date-input {
+  color: #e03e3e;
+  font-weight: 600;
+}
+
+.notion-tasks-date-label {
+  color: var(--text-faint);
+  font-size: 11px;
+}
+
+.notion-tasks-date-input {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  padding: 0 4px;
+  font-size: 11px;
+  color: var(--text-muted);
+  outline: none;
+  font-variant-numeric: tabular-nums;
+  width: 100px;
+  transition: all 0.1s;
+  color-scheme: dark light;
+}
+
+.notion-tasks-item:hover .notion-tasks-date-input {
+  border-color: var(--background-modifier-border);
+  background: var(--background-primary);
+}
+
+.notion-tasks-date-input:hover {
+  border-color: var(--interactive-accent) !important;
+  background: var(--background-primary);
+}
+
+.notion-tasks-date-input:focus {
+  border-color: var(--interactive-accent) !important;
+  background: var(--background-primary);
+  color: var(--text-normal);
+}
+
+.notion-tasks-date-clear {
+  background: none;
+  border: none;
+  color: var(--text-faint);
+  font-size: 10px;
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+}
+
+.notion-tasks-date-clear:hover {
+  color: #e03e3e;
+}
+
+/* Tag filter (toolbar) */
+.notion-tasks-tag-filter {
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 5px;
+  padding: 3px 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  outline: none;
+}
+
+.notion-tasks-tag-filter:focus {
+  border-color: var(--interactive-accent);
+}
+
+/* Add button */
+.notion-tasks-add {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--background-secondary);
+  border-top: 1px solid var(--background-modifier-border);
+  flex-shrink: 0;
+}
+
+.notion-tasks-add-btn {
+  flex-shrink: 0;
+}
+
+.notion-tasks-add-hint {
+  font-size: 11px;
+  color: var(--text-faint);
+}
+
+/* ============== Home (整体) ============== */
+
+/* .notion-home 已在顶部定义（自适应宽度 + max 1400px 居中）*/
+
+/* ============== Home Background (顶部 banner) ============== */
+
+.notion-home-bg {
+  position: relative;
+  width: 100%;
+  z-index: 0;
+  /* 注意：不要在这里加 overflow:hidden，否则下半圆会被裁切 */
+  /* 图片裁切由 .notion-home-bg-clip 容器负责 */
+}
+
+/* 真正裁切图片的容器（不影响 avatar） */
+.notion-home-bg-clip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  /* Notion 风格：硬切，无渐变 */
+}
+
+.notion-home-bg.is-light-title .notion-home-bg-title {
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+.notion-home-bg.is-dark-title .notion-home-bg-title {
+  color: var(--text-normal);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.4);
+}
+
+.notion-home-bg-title {
+  position: absolute;
+  top: 16px;
+  right: 24px;
+  font-size: 12px;
+  font-weight: 500;
+  opacity: 0.85;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+}
+
+.notion-home-avatar {
+  position: absolute;
+  left: 80px;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--background-primary);
+  border: 4px solid var(--background-primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  font-size: 36px;
+}
+
+.notion-home-avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+.notion-home-avatar-emoji {
+  line-height: 1;
+}
+
+.notion-home-avatar-edit {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--interactive-accent);
+  color: white;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--background-primary);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.notion-home-avatar:hover .notion-home-avatar-edit {
+  opacity: 1;
+}
+
+.notion-home-avatar-standalone {
+  padding: 28px 80px 0;
+  position: relative;
+  z-index: 2;
+}
+
+/* ============== Pie Chart (扇形图) - 上下排列 ============== */
+
+.notion-home-stats-row {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.notion-home-stats-row.has-pie {
+  /* 上下排：pie 在上，heatmap 在下 */
+}
+
+.notion-home-stats-row.no-pie .notion-home-heatmap-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.notion-home-pie-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 8px 0;
+}
+
+.notion-home-heatmap-wrap {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  /* 关掉 pie 时热力图占满父容器 */
+}
+
+/* 扇形图外层：tab + chart 垂直居中 */
+.notion-home-pie-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 扇形图分组 tab */
+.notion-pie-tabs {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  background: var(--background-secondary);
+  border-radius: 6px;
+  font-size: 10px;
+  margin-bottom: 8px;
+  user-select: none;
+}
+
+.notion-pie-tabs .notion-stat-tab {
+  font-size: 10px;
+  padding: 2px 8px;
+}
+
+/* pie 模式提示（多 tag 切分说明） */
+.notion-pie-mode-hint {
+  font-size: 9px;
+  color: var(--text-faint);
+  font-style: italic;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.notion-pie {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.notion-pie-svg-wrap {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.notion-pie-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.notion-pie-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.notion-pie-center-num {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-normal);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.notion-pie-center-label {
+  font-size: 9px;
+  color: var(--text-faint);
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.notion-pie-legend {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 11px;
+}
+
+.notion-pie-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 1px 0;
+}
+
+.notion-pie-legend-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.notion-pie-legend-label {
+  flex: 1;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.notion-pie-legend-pct {
+  color: var(--text-normal);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.notion-pie-empty {
+  text-align: center;
+  padding: 20px 10px;
+  color: var(--text-faint);
+}
+
+.notion-pie-empty-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+  opacity: 0.5;
+}
+
+.notion-pie-empty-text {
+  font-size: 12px;
+}
+
+/* 响应式：窗口窄时把 pie 放在热力图上方 */
+@media (max-width: 720px) {
+  .notion-home-stats-row.has-pie {
+    flex-direction: column;
+  }
+  .notion-home-pie-wrap {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+}
+
+/* ============== 4 Status (Doing/Prepare/Done/Abandon) ============== */
+
+.notion-tasks-status-btn {
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 11px;
+  color: var(--text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.12s;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.notion-tasks-status-btn:hover {
+  background: var(--background-modifier-hover);
+}
+
+.notion-tasks-status-btn.is-current {
+  /* 颜色由 inline style 设置 */
+}
+
+.notion-tasks-status-editor {
+  position: relative;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 2px;
+}
+
+.notion-tasks-status-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 20;
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 6px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+  margin-top: 4px;
+  min-width: 140px;
+  overflow: hidden;
+}
+
+.notion-tasks-status-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.notion-tasks-status-option:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.notion-tasks-status-option.is-active {
+  /* inline 颜色 */
+}
+
+.notion-tasks-status-en {
+  margin-left: auto;
+  font-size: 10px;
+  opacity: 0.6;
+}
+
+/* 任务行状态颜色：左边框 */
+.notion-tasks-item.status-doing {
+  border-left: 3px solid #10b981;
+  padding-left: 11px;
+}
+.notion-tasks-item.status-prepare {
+  border-left: 3px solid #f59e0b;
+  padding-left: 11px;
+}
+.notion-tasks-item.status-done {
+  opacity: 0.6;
+}
+.notion-tasks-item.status-done .notion-tasks-text {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+.notion-tasks-item.status-abandon {
+  opacity: 0.5;
+}
+.notion-tasks-item.status-abandon .notion-tasks-text {
+  text-decoration: line-through;
+  color: var(--text-faint);
+  font-style: italic;
+}
+
+/* 移除旧的 prio-* border-left（因为 status 已经有了） */
+.notion-tasks-item.prio-high,
+.notion-tasks-item.prio-medium,
+.notion-tasks-item.prio-low {
+  border-left-width: 3px;
+  border-left-style: solid;
+}
+
+.notion-tasks-item.status-doing.prio-high,
+.notion-tasks-item.status-prepare.prio-high {
+  border-left: 3px solid #e03e3e; /* priority wins if high */
+  padding-left: 11px;
+}
+
+/* Gantt 状态颜色 */
+.notion-gantt-row-label.status-doing {
+  border-left: 3px solid #10b981;
+}
+.notion-gantt-row-label.status-prepare {
+  border-left: 3px solid #f59e0b;
+}
+.notion-gantt-row-label.status-done {
+  opacity: 0.6;
+}
+.notion-gantt-row-label.status-abandon {
+  opacity: 0.4;
+}
+
+.notion-gantt-bar.status-doing {
+  background: #10b981;
+  color: white;
+}
+.notion-gantt-bar.status-prepare {
+  background: #f59e0b;
+  color: white;
+}
+.notion-gantt-bar.status-done {
+  background: #3b82f6;
+  color: white;
+}
+.notion-gantt-bar.status-abandon {
+  background: #9ca3af;
+  color: white;
+}
+
+/* Hero 跟背景有间距 */
+.notion-home-hero {
+  position: relative;
+  z-index: 2;
+}
+
+/* ============== Status Circle (极简 Notion checkbox 风格) ============== */
+
+.notion-status-circle-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.notion-status-circle {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid var(--text-faint);
+  background: transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: border-color 0.1s, background 0.1s;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.notion-status-circle::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: transparent;
+  transition: background 0.1s;
+}
+
+.notion-status-circle:hover {
+  border-color: var(--text-muted);
+}
+
+.notion-status-circle.is-doing {
+  border-color: #10b981;
+}
+.notion-status-circle.is-doing::after {
+  background: #10b981;
+}
+
+.notion-status-circle.is-prepare {
+  border-color: #d1d5db;
+  border-style: dashed;
+}
+.theme-dark .notion-status-circle.is-prepare {
+  border-color: #4b5563;
+}
+
+.notion-status-circle.is-done {
+  border-color: #3b82f6;
+  background: #3b82f6;
+}
+.notion-status-circle.is-done::after {
+  content: "✓";
+  color: white;
+  background: transparent;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 700;
+  width: auto;
+  height: auto;
+  border-radius: 0;
+}
+
+.notion-status-circle.is-abandon {
+  border-color: #d1d5db;
+  opacity: 0.6;
+}
+.notion-status-circle.is-abandon::after {
+  content: "×";
+  color: var(--text-faint);
+  background: transparent;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 600;
+  width: auto;
+  height: auto;
+  border-radius: 0;
+}
+
+.theme-dark .notion-status-circle {
+  border-color: #4b5563;
+}
+.theme-dark .notion-status-circle.is-abandon {
+  border-color: #374151;
+}
+
+.notion-status-circle-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 50;
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+  min-width: 160px;
+  padding: 4px;
+  overflow: hidden;
+}
+
+.notion-status-circle-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: 5px;
+  padding: 6px 8px;
+  font-size: 12px;
+  color: var(--text-normal);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.notion-status-circle-option:hover {
+  background: var(--background-modifier-hover);
+}
+
+.notion-status-circle-option.is-active {
+  background: var(--background-modifier-hover);
+}
+
+.notion-status-circle-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid var(--text-faint);
+  flex-shrink: 0;
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  background: transparent;
+  position: relative;
+}
+
+.notion-status-circle-dot::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.notion-status-circle-dot.is-doing {
+  border-color: #10b981;
+}
+.notion-status-circle-dot.is-doing::after {
+  background: #10b981;
+}
+.notion-status-circle-dot.is-prepare {
+  border-color: #d1d5db;
+  border-style: dashed;
+}
+.notion-status-circle-dot.is-done {
+  background: #3b82f6;
+  border-color: #3b82f6;
+}
+.notion-status-circle-dot.is-done::after {
+  content: "✓";
+  color: white;
+  background: transparent;
+  font-size: 9px;
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  line-height: 1;
+}
+.notion-status-circle-dot.is-abandon {
+  border-color: #d1d5db;
+  opacity: 0.6;
+}
+.notion-status-circle-dot.is-abandon::after {
+  content: "×";
+  color: var(--text-faint);
+  background: transparent;
+  font-size: 10px;
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  line-height: 1;
+}
+
+.notion-status-circle-label {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.notion-status-circle-label .en {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* 任务行左边框由 StatusCircle 决定（去掉 status-* 的左边框，避免重复） */
+.notion-tasks-item.status-doing,
+.notion-tasks-item.status-prepare,
+.notion-tasks-item.status-done,
+.notion-tasks-item.status-abandon {
+  padding-left: 0;
+  border-left: none;
+}
+
+/* ============== Image status (Settings) ============== */
+
+.notion-home-settings-image-status {
+  margin-top: 4px;
+  padding: 8px 12px;
+  background: var(--background-secondary);
+  border-radius: 6px;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.notion-home-settings-image-status .muted {
+  word-break: break-all;
+}
+
+.notion-home-settings-thumb {
+  max-width: 200px;
+  max-height: 80px;
+  border-radius: 4px;
+  display: block;
+  border: 1px solid var(--background-modifier-border);
+}
+
+/* ============== Notion Hero (大标题 + 工具栏) ============== */
+
+.notion-hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 28px 80px 16px;
+  position: relative;
+  z-index: 2;
+}
+
+.notion-hero-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.notion-hero-title {
+  margin: 0;
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-normal);
+  line-height: 1.1;
+}
+
+.notion-hero-subtitle {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.notion-hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  padding-top: 12px;
+}
+
+.notion-hero-meta {
+  font-size: 12px;
+  color: var(--text-faint);
+  margin-right: 6px;
+}
+
+.notion-hero-action {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.12s;
+}
+
+.notion-hero-action:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.notion-hero-action-icon {
+  font-size: 13px;
+}
+
+.notion-hero-action-dots {
+  font-size: 16px;
+  letter-spacing: 1px;
+  line-height: 1;
+}
+
+/* ============== Home 两栏布局 ============== */
+
+.notion-home-twocol {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+  gap: 24px;
+  padding: 0 80px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 720px) {
+  .notion-home-twocol {
+    grid-template-columns: 1fr;
+    padding: 0 16px;
+  }
+  .notion-hero {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+.notion-home-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+/* ============== Board View (看板) ============== */
+
+.notion-board {
+  display: flex;
+  gap: 12px;
+  padding: 4px 0 16px;
+  overflow-x: auto;
+  min-height: 200px;
+  flex: 1;
+}
+
+.notion-board-col {
+  flex: 0 0 280px;
+  display: flex;
+  flex-direction: column;
+  background: var(--background-secondary);
+  border-radius: 8px;
+  max-height: 100%;
+  overflow: hidden;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+/* 拖拽时的列高亮 */
+.notion-board-col.is-drop-target {
+  background: var(--background-modifier-hover);
+  box-shadow: inset 0 0 0 2px var(--interactive-accent);
+}
+
+.notion-board-col.is-drop-target .notion-board-add {
+  opacity: 1;
+  color: var(--interactive-accent) !important;
+}
+
+.notion-board-col-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-normal);
+  border-bottom: 2px solid;
+  background: var(--background-primary);
+  flex-shrink: 0;
+}
+
+.notion-board-col-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.notion-board-col-title {
+  flex: 1;
+}
+
+.notion-board-col-count {
+  background: var(--background-modifier-border);
+  color: var(--text-muted);
+  font-size: 11px;
+  padding: 0 6px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  min-width: 18px;
+  text-align: center;
+}
+
+.notion-board-col-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.notion-board-card {
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: box-shadow 0.12s, border-color 0.12s, transform 0.06s;
+}
+
+.notion-board-card:hover {
+  border-color: var(--background-modifier-border-hover);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.notion-board-card.is-current {
+  border-color: #e03e3e;
+  background: rgba(224, 62, 62, 0.04);
+}
+
+/* 正在拖拽的卡片 */
+.notion-board-card.is-dragging {
+  opacity: 0.4;
+  transform: rotate(-1.5deg) scale(0.97);
+  cursor: grabbing;
+}
+
+.notion-board-card {
+  cursor: grab;
+}
+
+.notion-board-card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.notion-board-card-title {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-normal);
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.notion-board-card.status-done .notion-board-card-title,
+.notion-board-card.status-abandon .notion-board-card-title {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.notion-board-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.notion-board-card-due.is-overdue {
+  color: #e03e3e;
+  font-weight: 600;
+}
+.notion-board-card-due.is-today {
+  color: var(--text-accent);
+  font-weight: 600;
+}
+.notion-board-card-time {
+  color: var(--text-muted);
+  font-family: var(--font-monospace);
+  font-variant-numeric: tabular-nums;
+}
+
+.notion-board-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-top: 4px;
+}
+
+.notion-board-card-tag {
+  display: inline-block;
+  background: var(--background-modifier-border);
+  color: var(--text-muted);
+  padding: 0 5px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-family: var(--font-monospace);
+  line-height: 16px;
+}
+
+.notion-board-card-tag-more {
+  color: var(--text-faint);
+  font-size: 10px;
+  line-height: 16px;
+  padding: 0 4px;
+}
+
+.notion-board-add {
+  background: transparent;
+  border: 1px dashed var(--background-modifier-border);
+  border-radius: 5px;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: left;
+  margin-top: 4px;
+  transition: all 0.1s;
+}
+
+.notion-board-add:hover {
+  background: var(--background-modifier-hover);
+  border-color: currentColor;
+}
+
+.notion-board-add {
+  color: var(--text-muted);
+}
+
+/* ============== Time Adjust Menu ============== */
+
+.notion-time-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.notion-time-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 11px;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.1s;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.notion-time-btn.has-time {
+  color: var(--text-normal);
+}
+
+.notion-time-btn:hover {
+  background: var(--background-modifier-active-hover);
+  color: var(--text-normal);
+}
+
+.notion-time-btn.is-current {
+  background: rgba(224, 62, 62, 0.1);
+  color: #e03e3e;
+  font-weight: 600;
+  animation: notion-tasks-pulse-soft 1.5s ease-in-out infinite;
+}
+
+.notion-time-compact {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 10px;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  transition: all 0.1s;
+  font-variant-numeric: tabular-nums;
+  line-height: 18px;
+}
+
+.notion-time-compact:hover {
+  background: var(--background-modifier-active-hover);
+  color: var(--text-normal);
+}
+
+.notion-time-compact.is-current {
+  background: rgba(224, 62, 62, 0.1);
+  color: #e03e3e;
+  font-weight: 600;
+}
+
+.notion-time-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  padding: 1px 6px;
+  font-size: 10px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: var(--font-monospace);
+  font-variant-numeric: tabular-nums;
+  line-height: 18px;
+  transition: all 0.1s;
+}
+
+.notion-time-chip.has-time {
+  color: var(--text-normal);
+  background: var(--background-modifier-border);
+}
+
+.notion-time-chip:hover {
+  background: var(--background-modifier-active-hover);
+  color: var(--text-normal);
+}
+
+.notion-time-chip.is-current {
+  background: #e03e3e;
+  color: white;
+  font-weight: 600;
+}
+
+.notion-time-chip-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: white;
+  animation: notion-tasks-pulse 1.2s ease-in-out infinite;
+}
+
+.notion-time-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 50;
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  min-width: 200px;
+  padding: 4px;
+  overflow: hidden;
+  font-size: 12px;
+}
+
+.notion-time-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px 4px;
+  font-weight: 600;
+  color: var(--text-normal);
+  font-size: 12px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  margin-bottom: 4px;
+}
+
+.notion-time-menu-total {
+  font-size: 11px;
+  color: var(--text-faint);
+  font-weight: 400;
+  font-family: var(--font-monospace);
+}
+
+.notion-time-menu-section {
+  padding: 4px 0;
+}
+
+.notion-time-menu-section + .notion-time-menu-section {
+  border-top: 1px solid var(--background-modifier-border);
+  margin-top: 4px;
+  padding-top: 6px;
+}
+
+.notion-time-menu-label {
+  font-size: 10px;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 10px;
+  font-weight: 600;
+}
+
+.notion-time-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  padding: 0 4px;
+}
+
+.notion-time-menu-quick {
+  background: var(--background-modifier-hover);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 4px 6px;
+  font-size: 11px;
+  color: var(--text-normal);
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  transition: all 0.1s;
+}
+
+.notion-time-menu-quick:hover {
+  background: var(--background-modifier-active-hover);
+  border-color: var(--interactive-accent);
+}
+
+.notion-time-menu-quick.is-add {
+  color: #10b981;
+}
+.notion-time-menu-quick.is-sub {
+  color: #e03e3e;
+}
+
+.notion-time-menu-custom {
+  padding: 0 4px;
+}
+
+.notion-time-menu-custom .notion-time-menu-quick {
+  width: 100%;
+  text-align: center;
+  padding: 5px 8px;
+}
+
+.notion-time-menu-action {
+  display: block;
+  width: calc(100% - 8px);
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: var(--text-normal);
+  cursor: pointer;
+  margin: 0 4px;
+  transition: background 0.1s;
+}
+
+.notion-time-menu-action:hover {
+  background: var(--background-modifier-hover);
+}
+
+.notion-time-menu-action.is-start {
+  color: #10b981;
+  font-weight: 500;
+}
+.notion-time-menu-action.is-stop {
+  color: #e03e3e;
+  font-weight: 500;
+}
+.notion-time-menu-action.is-clear {
+  color: var(--text-faint);
+  font-size: 11px;
+}
+.notion-time-menu-action.is-clear:hover {
+  color: #e03e3e;
+}
+
+/* 看板卡片底部 timer */
+.notion-board-card-timer {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--background-modifier-border);
+  display: flex;
+  justify-content: flex-end;
+  opacity: 0.6;
+  transition: opacity 0.1s;
+}
+
+.notion-board-card:hover .notion-board-card-timer {
+  opacity: 1;
+}
+
+.notion-board-card.is-current .notion-board-card-timer {
+  opacity: 1;
+}
+
+/* Gantt 行内 timer */
+.notion-gantt-timer {
+  margin-left: auto;
+  padding-right: 8px;
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+.notion-gantt-row:hover .notion-gantt-timer {
+  opacity: 1;
+}
+
+.notion-gantt-row-label.status-doing .notion-gantt-timer,
+.notion-gantt-row:hover .notion-gantt-timer {
+  opacity: 1;
+}

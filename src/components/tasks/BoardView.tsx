@@ -19,7 +19,9 @@ import { StatusCircle } from "./StatusCircle";
 import { TimeAdjustMenu } from "./TimeAdjustMenu";
 import { SubTaskList } from "./SubTaskList";
 import { StatusPill, TagChip } from "./Pills";
+import { PomodoroButton } from "../pomodoro/PomodoroButton";
 import type { SubTaskService } from "../../services/subTaskService";
+import type { PomodoroService } from "../../services/pomodoroService";
 
 interface BoardViewProps {
   tasks: Task[];
@@ -41,6 +43,12 @@ interface BoardViewProps {
   subTaskService?: SubTaskService;
   /** 语言（影响列标题 / 按钮文案） */
   language?: "zh" | "en";
+  /** 番茄钟 service（可选） */
+  pomodoroService?: PomodoroService;
+  /** 打开 Pomodoro 全屏 overlay */
+  onOpenPomodoroOverlay?: () => void;
+  /** 是否启用番茄模块 */
+  pomodoroEnabled?: boolean;
 }
 
 const COLUMN_ORDER: TaskStatus[] = ["Prepare", "Abandon", "Doing", "Done"];
@@ -62,6 +70,9 @@ export function BoardView({
   onToggleExpand,
   subTaskService,
   language = "zh",
+  pomodoroService,
+  onOpenPomodoroOverlay,
+  pomodoroEnabled = true,
 }: BoardViewProps) {
   // 拖拽状态：哪个 task 正在被拖、当前 hover 在哪一列
   const [draggingId, setDraggingId] = useState<string | null>(null);
@@ -237,6 +248,19 @@ export function BoardView({
                         variant="compact"
                       />
                     </div>
+                    {/* 番茄按钮（hover 显示 / 专注中常驻） */}
+                    {pomodoroService && pomodoroEnabled && (
+                      <div className="notion-board-card-pomo">
+                        <PomodoroButton
+                          service={pomodoroService}
+                          taskFile={t.file}
+                          taskText={t.basename}
+                          onOpenOverlay={() => onOpenPomodoroOverlay?.()}
+                          language={language}
+                          size="sm"
+                        />
+                      </div>
+                    )}
                     {/* sub-task 展开区 */}
                     {isExpanded && subTaskService && (() => {
                       const tf = app.vault.getAbstractFileByPath(t.file);

@@ -331,6 +331,59 @@ export class TimeTracker {
     return { cells, weeks, maxSeconds, rangeInfo };
   }
 
+  // ===== 连续打卡（Streak）=====
+
+  /**
+   * 连续工作天数（今天也算，如果今天有计时）
+   * - 阈值：每天累计 ≥ minSeconds (默认 60) 才算"打卡"
+   * - 跨天：从今天往回数，每天都得达标；遇到第一个不达标的日期就停
+   * - 如果今天还没达标，从昨天开始数（保持连续记录不断）
+   */
+  getStreak(minSeconds: number = 60): { current: number; best: number; todayActive: boolean } {
+    const daily = this.getDailyTotals();
+    let best = 0;
+    let run = 0;
+
+    // 先算 best（全历史最长连续）
+    const allDates = Array.from(daily.keys()).sort();
+    for (const d of allDates) {
+      const sec = Math.round((daily.get(d) || 0) / 1000);
+      if (sec >= minSeconds) {
+        run += 1;
+        if (run > best) best = run;
+      } else {
+        run = 0;
+      }
+    }
+
+    // 算 current（从今天往回数）
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayIso = this.isoDate(today);
+    const todaySec = Math.round((daily.get(todayIso) || 0) / 1000);
+    const todayActive = todaySec >= minSeconds;
+
+    let current = 0;
+    const cursor = new Date(today);
+    // 如果今天没达标，往回退一天再开始数（保持连续）
+    if (!todayActive) {
+      cursor.setDate(cursor.getDate() - 1);
+    }
+    // 一直往回走，遇到第一个不达标的日期就停
+    for (let i = 0; i < 365 * 5; i++) { // 最多 5 年保险
+      const iso = this.isoDate(cursor);
+      const sec = Math.round((daily.get(iso) || 0) / 1000);
+      if (sec >= minSeconds) {
+        current += 1;
+        cursor.setDate(cursor.getDate() - 1);
+      } else {
+        break;
+      }
+    }
+
+    return { current, best: Math.max(best, current), todayActive };
+  }
+
   // ===== 工具 =====
 
   private isoDate(d: Date): string {

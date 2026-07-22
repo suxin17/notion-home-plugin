@@ -3759,3 +3759,536 @@
 .notion-gantt-row:hover .notion-gantt-timer {
   opacity: 1;
 }
+
+.notion-gantt-row.is-current .notion-gantt-timer {
+  opacity: 1;
+}
+
+/* ============== v0.8: Streak (连续打卡) ============== */
+
+.notion-streak-card {
+  display: block;
+}
+
+.notion-streak-today {
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--background-secondary);
+}
+
+.notion-streak-main {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 12px 0 8px;
+}
+
+.notion-streak-flame {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.notion-streak-number {
+  font-size: 42px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text-normal);
+  font-variant-numeric: tabular-nums;
+}
+
+.notion-streak-unit {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-left: 2px;
+}
+
+.notion-streak-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.notion-streak-meta b {
+  color: var(--text-normal);
+  font-weight: 600;
+}
+
+.notion-streak-divider {
+  opacity: 0.5;
+}
+
+/* ============== v0.8: Habit Tracker ============== */
+
+.notion-habit-card {
+  display: block;
+}
+
+.notion-habit-summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.notion-habit-rate {
+  font-weight: 600;
+  color: var(--text-normal);
+  font-variant-numeric: tabular-nums;
+}
+
+.notion-habit-rate-pct {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.notion-habit-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 0;
+  color: var(--text-muted);
+}
+
+.notion-habit-empty p {
+  margin: 0;
+  font-size: 13px;
+}
+
+.notion-habit-week {
+  display: flex;
+  gap: 4px;
+  margin: 10px 0;
+  padding: 6px 0;
+  border-top: 1px solid var(--background-modifier-border);
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.notion-habit-week-cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.notion-habit-week-day {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.notion-habit-week-box {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: var(--text-on-accent);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  cursor: default;
+}
+
+.notion-habit-week-num {
+  opacity: 0.85;
+}
+
+.notion-habit-addform {
+  display: flex;
+  gap: 6px;
+  margin: 8px 0;
+  padding: 8px;
+  background: var(--background-secondary);
+  border-radius: 6px;
+}
+
+.notion-habit-icon-input,
+.notion-habit-name-input {
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 13px;
+  color: var(--text-normal);
+  font-family: inherit;
+  outline: none;
+}
+
+.notion-habit-icon-input {
+  width: 36px;
+  text-align: center;
+}
+
+.notion-habit-name-input {
+  flex: 1;
+}
+
+.notion-habit-icon-input:focus,
+.notion-habit-name-input:focus {
+  border-color: var(--interactive-accent);
+}
+
+.notion-habit-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.notion-habit-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 4px;
+  border-radius: 4px;
+  transition: background 0.1s;
+}
+
+.notion-habit-item:hover {
+  background: var(--background-modifier-hover);
+}
+
+.notion-habit-item.is-done {
+  opacity: 0.85;
+}
+
+.notion-habit-check {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  padding: 0;
+  transition: transform 0.1s;
+}
+
+.notion-habit-check:hover {
+  transform: scale(1.1);
+}
+
+.notion-habit-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.notion-habit-name {
+  flex: 1;
+  font-size: 14px;
+  color: var(--text-normal);
+}
+
+.notion-habit-item.is-done .notion-habit-name {
+  text-decoration: line-through;
+  text-decoration-color: var(--text-muted);
+  color: var(--text-muted);
+}
+
+.notion-habit-count {
+  font-size: 12px;
+  color: var(--text-muted);
+  background: var(--background-secondary);
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-variant-numeric: tabular-nums;
+}
+
+.notion-habit-plus {
+  background: transparent;
+  border: 1px solid var(--background-modifier-border);
+  color: var(--text-muted);
+  border-radius: 3px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+}
+
+.notion-habit-plus:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.notion-habit-streak {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: rgba(232, 93, 93, 0.1);
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-variant-numeric: tabular-nums;
+}
+
+.notion-habit-del {
+  background: transparent;
+  border: none;
+  color: var(--text-faint);
+  font-size: 16px;
+  cursor: pointer;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 3px;
+  opacity: 0;
+  transition: opacity 0.1s, background 0.1s;
+}
+
+.notion-habit-item:hover .notion-habit-del {
+  opacity: 1;
+}
+
+.notion-habit-del:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-error);
+}
+
+/* ============== v0.8: Pomodoro (番茄钟) ============== */
+
+/* PomodoroButton 4 个状态 */
+.notion-pomodoro-btn {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-weight: 500;
+  font-family: inherit;
+  transition: background 0.1s, border-color 0.1s, color 0.1s;
+  white-space: nowrap;
+}
+
+.notion-pomodoro-btn:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.notion-pomodoro-btn.is-running {
+  background: rgba(232, 93, 93, 0.12);
+  color: #e85d5d;
+  border-color: rgba(232, 93, 93, 0.4);
+  cursor: pointer;
+}
+
+.notion-pomodoro-btn.is-running:hover {
+  background: rgba(232, 93, 93, 0.2);
+}
+
+.notion-pomodoro-btn.is-break {
+  background: rgba(78, 201, 176, 0.12);
+  color: #4ec9b0;
+  border-color: rgba(78, 201, 176, 0.4);
+}
+
+.notion-pomodoro-btn.is-break:hover {
+  background: rgba(78, 201, 176, 0.2);
+}
+
+.notion-pomodoro-btn.is-other {
+  opacity: 0.7;
+}
+
+.notion-pomodoro-btn.is-other:hover {
+  opacity: 1;
+}
+
+/* TaskTable / BoardView / GanttView 里的 PomodoroButton 容器 */
+.notion-task-table-pomo {
+  padding: 0 4px;
+}
+
+.notion-board-card-pomo {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.notion-gantt-row-pomo {
+  margin-left: 4px;
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+.notion-gantt-row:hover .notion-gantt-row-pomo {
+  opacity: 1;
+}
+
+.notion-gantt-row.is-current .notion-gantt-row-pomo {
+  opacity: 1;
+}
+
+/* TaskView 顶部的"今日完成 X 个番茄"指示 */
+.notion-tasks-pomo-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 12px;
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 2px 8px;
+  background: rgba(232, 93, 93, 0.08);
+  border-radius: 4px;
+}
+
+.notion-tasks-pomo-summary.is-running {
+  background: rgba(232, 93, 93, 0.18);
+  color: #e85d5d;
+}
+
+.notion-tasks-pomo-summary.is-break {
+  background: rgba(78, 201, 176, 0.18);
+  color: #4ec9b0;
+}
+
+/* Pomodoro 全屏 overlay */
+.notion-pomodoro-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.notion-pomodoro-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px;
+}
+
+.notion-pomodoro-ring-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.notion-pomodoro-ring-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(12px);
+  border-radius: 50%;
+}
+
+.notion-pomodoro-phase-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+  line-height: 1;
+}
+
+.notion-pomodoro-phase-label {
+  font-size: 16px;
+  opacity: 0.7;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.notion-pomodoro-time {
+  font-size: 56px;
+  font-weight: 300;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 2px;
+  margin-top: 4px;
+}
+
+.notion-pomodoro-task {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 15px;
+  margin-top: 24px;
+  text-align: center;
+  max-width: 500px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.notion-pomodoro-progress-text {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.notion-pomodoro-btns {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.notion-pomodoro-btns button {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  font-weight: 500;
+  font-family: inherit;
+  transition: background 0.1s;
+}
+
+.notion-pomodoro-btns button.mod-cta {
+  background: rgba(232, 93, 93, 0.85);
+  color: #fff;
+}
+
+.notion-pomodoro-btns button.mod-cta:hover {
+  background: rgba(232, 93, 93, 1);
+}
+
+.notion-pomodoro-btns button:not(.mod-cta) {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.notion-pomodoro-btns button:not(.mod-cta):hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.notion-streak-pomo {
+  font-size: 12px;
+  color: #e85d5d;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(232, 93, 93, 0.08);
+  font-variant-numeric: tabular-nums;
+}
+
+.notion-streak-pomo b {
+  color: #e85d5d;
+  font-weight: 700;
+}

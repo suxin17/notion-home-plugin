@@ -449,6 +449,9 @@ function TaskScreen({ plugin }: { plugin: NotionHomePlugin }) {
             onToggleExpand={toggleExpand}
             subTaskService={plugin.subTaskService}
             language={lang}
+            pomodoroService={plugin.pomodoroService}
+            onOpenPomodoroOverlay={() => plugin.openPomodoroOverlay()}
+            pomodoroEnabled={mods.pomodoro}
           />
         ) : null
       ) : viewMode === "gantt" ? (
@@ -491,6 +494,9 @@ function TaskScreen({ plugin }: { plugin: NotionHomePlugin }) {
               onToggleExpand={toggleExpand}
               subTaskService={plugin.subTaskService}
               language={lang}
+              pomodoroService={plugin.pomodoroService}
+              onOpenPomodoroOverlay={() => plugin.openPomodoroOverlay()}
+              pomodoroEnabled={mods.pomodoro}
             />
           </>
         ) : null
@@ -522,6 +528,9 @@ function TaskScreen({ plugin }: { plugin: NotionHomePlugin }) {
               editingDate={editingDate}
               onEditDate={(taskId, which) => setEditingDate({ taskId, which })}
               onCancelEditDate={() => setEditingDate(null)}
+              pomodoroService={plugin.pomodoroService}
+              onOpenPomodoroOverlay={() => plugin.openPomodoroOverlay()}
+              pomodoroEnabled={mods.pomodoro}
             />
           )
         )

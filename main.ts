@@ -5,9 +5,12 @@ import { TaskService } from "./src/services/taskService";
 import { NoteService } from "./src/services/noteService";
 import { TimeTracker } from "./src/services/timeTracker";
 import { SubTaskService } from "./src/services/subTaskService";
+import { PomodoroService, DEFAULT_POMODORO_CONFIG, DEFAULT_POMODORO_STATE, type PomodoroConfig, type PomodoroState, type PomodoroRecord } from "./src/services/pomodoroService";
+import { HabitService, type Habit, type Checkin } from "./src/services/habitService";
 import { HomeView, VIEW_TYPE_HOME } from "./src/views/HomeView";
 import { TaskView, VIEW_TYPE_TASK } from "./src/views/TaskView";
 import { NotionHomeSettingTab } from "./src/modals/SettingsTab";
+import { PomodoroOverlay } from "./src/components/pomodoro/PomodoroOverlay";
 import { parseQuickCapture, mergeTemplateOpts, pickFolderForTemplate } from "./src/templates/taskTemplates";
 
 /** 简单的 YYYY-MM-DD（不依赖 utils 避免循环引用） */
@@ -17,6 +20,8 @@ function todayStr(): string {
 }
 
 const TIMELOG_BACKUP_KEY = "notion-home-timelog-backup";
+const POMODORO_BACKUP_KEY = "notion-home-pomodoro-backup";
+const HABITS_BACKUP_KEY = "notion-home-habits-backup";
 
 export interface PluginSettings {
   openHomeOnStart: boolean;
@@ -66,6 +71,8 @@ export interface PluginSettings {
       heatmap: boolean;       // 热力图区（含 pie + heatmap）
       pieChart: boolean;      // 扇形图（关闭后只显示热力图）
       recent: boolean;
+      streak: boolean;        // 连续打卡
+      habits: boolean;        // 习惯追踪
     };
     tasks: {
       search: boolean;
@@ -75,8 +82,13 @@ export interface PluginSettings {
       gantt: boolean;
       timer: boolean;
       addBar: boolean;
+      pomodoro: boolean;      // 番茄按钮（每个 task 行 / timer 区）
     };
   };
+  /** 番茄钟配置 */
+  pomodoro: PomodoroConfig;
+  /** 连续打卡的最低有效秒数 */
+  streakMinSeconds: number;
 }
 
 const DEFAULT_SETTINGS: PluginSettings = {
@@ -115,6 +127,8 @@ const DEFAULT_SETTINGS: PluginSettings = {
       heatmap: true,
       pieChart: true,
       recent: true,
+      streak: true,
+      habits: true,
     },
     tasks: {
       search: true,
@@ -124,8 +138,11 @@ const DEFAULT_SETTINGS: PluginSettings = {
       gantt: true,
       timer: true,
       addBar: true,
+      pomodoro: true,
     },
   },
+  pomodoro: DEFAULT_POMODORO_CONFIG,
+  streakMinSeconds: 60,
 };
 
 export default class NotionHomePlugin extends Plugin {
@@ -134,6 +151,10 @@ export default class NotionHomePlugin extends Plugin {
   noteService!: NoteService;
   timeTracker!: TimeTracker;
   subTaskService!: SubTaskService;
+  pomodoroService!: PomodoroService;
+  habitService!: HabitService;
+  /** 当前打开的 Pomodoro overlay（如果打开的话） */
+  private pomodoroOverlay: PomodoroOverlay | null = null;
 
   /** 语言变更订阅器（用于 Home / Task 视图实时同步） */
   private languageListeners = new Set<() => void>();
@@ -172,6 +193,53 @@ export default class NotionHomePlugin extends Plugin {
 
     // 订阅 timeTracker：每次变化都同步写 localStorage 兜底
     this.timeTracker.subscribe(() => this.persistTimeLog());
+
+    // ===== 番茄钟服务 =====
+    const pomoData = data?.pomodoro as { config?: PomodoroConfig; state?: PomodoroState; records?: PomodoroRecord[] } | undefined;
+    let pomoState = pomoData?.state;
+    let pomoRecords = pomoData?.records;
+    if (!pomoState || !pomoRecords) {
+      try {
+        const b = localStorage.getItem(POMODORO_BACKUP_KEY);
+        if (b) {
+          const parsed = JSON.parse(b);
+          pomoState = pomoState || parsed.state;
+          pomoRecords = pomoRecords || parsed.records;
+        }
+      } catch { /* ignore */ }
+    }
+    this.pomodoroService = new PomodoroService(
+      pomoData?.config || this.settings.pomodoro,
+      pomoState || DEFAULT_POMODORO_STATE,
+      pomoRecords || []
+    );
+    // 把最新的 config 同步回 settings（保证 settings.pomodoro 永远反映当前）
+    this.settings.pomodoro = this.pomodoroService.getConfig();
+    // 番茄钟：phase 切换时联动 timeTracker
+    this.pomodoroService.onPhaseStart = (phase, linkedFile) => {
+      void this.handlePomodoroPhaseStart(phase, linkedFile);
+    };
+    this.pomodoroService.onPhaseEnd = (ended, next, linkedFile) => {
+      void this.handlePomodoroPhaseEnd(ended, next, linkedFile);
+    };
+    this.pomodoroService.onTick(() => this.persistPomodoro());
+
+    // ===== 习惯追踪 =====
+    const habData = data?.habits as { habits?: Habit[]; checkins?: Checkin[] } | undefined;
+    let habHabits = habData?.habits;
+    let habCheckins = habData?.checkins;
+    if (!habHabits || !habCheckins) {
+      try {
+        const b = localStorage.getItem(HABITS_BACKUP_KEY);
+        if (b) {
+          const parsed = JSON.parse(b);
+          habHabits = habHabits || parsed.habits;
+          habCheckins = habCheckins || parsed.checkins;
+        }
+      } catch { /* ignore */ }
+    }
+    this.habitService = new HabitService(habHabits || [], habCheckins || []);
+    this.habitService.subscribe(() => this.persistHabits());
 
     // 注册视图
     this.registerView(VIEW_TYPE_HOME, (leaf) => new HomeView(leaf, this));
@@ -260,6 +328,30 @@ export default class NotionHomePlugin extends Plugin {
       },
     });
 
+    // ===== 番茄钟命令 =====
+    this.addCommand({
+      id: "pomodoro-start",
+      name: "🍅 Start a pomodoro (no task)",
+      callback: () => {
+        if (this.pomodoroService.getState().phase !== "idle") {
+          this.openPomodoroOverlay();
+          return;
+        }
+        this.pomodoroService.startFocus(null, null);
+        this.openPomodoroOverlay();
+      },
+    });
+    this.addCommand({
+      id: "pomodoro-stop",
+      name: "⏹ Stop pomodoro",
+      callback: () => this.pomodoroService.stop(),
+    });
+    this.addCommand({
+      id: "pomodoro-open-overlay",
+      name: "🍅 Open pomodoro overlay",
+      callback: () => this.openPomodoroOverlay(),
+    });
+
     // 启动时打开 Home
     if (this.settings.openHomeOnStart) {
       this.app.workspace.onLayoutReady(() => this.activateHomeView());
@@ -269,6 +361,8 @@ export default class NotionHomePlugin extends Plugin {
   async onunload(): Promise<void> {
     // 同步写 localStorage 兜底（saveData 是 async，Obsidian 关闭时可能不等）
     this.persistTimeLog();
+    this.persistPomodoro();
+    this.persistHabits();
     // 停掉正在跑的计时（fire-and-forget）
     void this.stopAndPersist();
   }
@@ -297,6 +391,132 @@ export default class NotionHomePlugin extends Plugin {
     }
     // data.json 异步写
     void this.saveData({ settings: this.settings, timeLog: log });
+  }
+
+  /** 持久化 Pomodoro 状态（data.json + localStorage 兜底） */
+  persistPomodoro(): void {
+    if (!this.pomodoroService) return;
+    const data = this.pomodoroService.serialize();
+    try {
+      localStorage.setItem(POMODORO_BACKUP_KEY, JSON.stringify({ state: data.state, records: data.records }));
+    } catch { /* ignore */ }
+    void this.saveData({ settings: this.settings, timeLog: this.timeTracker.getLog(), pomodoro: data });
+  }
+
+  /** 持久化 Habits（data.json + localStorage 兜底） */
+  persistHabits(): void {
+    if (!this.habitService) return;
+    const data = this.habitService.serialize();
+    try {
+      localStorage.setItem(HABITS_BACKUP_KEY, JSON.stringify(data));
+    } catch { /* ignore */ }
+    void this.saveData({ settings: this.settings, timeLog: this.timeTracker.getLog(), habits: data });
+  }
+
+  // ===== 番茄钟 → 计时器联动 =====
+
+  /** Pomodoro phase 启动时：如果 focus，启动 timeTracker；如果是 break，停止 timeTracker */
+  private async handlePomodoroPhaseStart(phase: string, linkedFile: string | null): Promise<void> {
+    if (phase === "focus" && linkedFile) {
+      const tasks = await this.taskService.getAllTasks();
+      const target = tasks.find((t) => t.file === linkedFile);
+      if (target) {
+        // 如果当前在跑别的任务，先停
+        const old = this.timeTracker.stopIfRunning();
+        if (old) {
+          const oldTarget = tasks.find((t) => t.file === old.file);
+          if (oldTarget) {
+            await this.taskService.accumulateTime(oldTarget, Math.round(old.durationMs / 1000));
+            await this.taskService.clearTimingMark(oldTarget);
+          }
+        }
+        this.timeTracker.start(target);
+        await this.taskService.markTiming(target, Date.now());
+      }
+    } else if (phase === "shortBreak" || phase === "longBreak") {
+      // 休息时停掉 timeTracker
+      const old = this.timeTracker.stopIfRunning();
+      if (old) {
+        const tasks = await this.taskService.getAllTasks();
+        const oldTarget = tasks.find((t) => t.file === old.file);
+        if (oldTarget) {
+          await this.taskService.accumulateTime(oldTarget, Math.round(old.durationMs / 1000));
+          await this.taskService.clearTimingMark(oldTarget);
+        }
+      }
+    } else if (phase === "idle") {
+      // 用户停止
+      const old = this.timeTracker.stopIfRunning();
+      if (old) {
+        const tasks = await this.taskService.getAllTasks();
+        const oldTarget = tasks.find((t) => t.file === old.file);
+        if (oldTarget) {
+          await this.taskService.accumulateTime(oldTarget, Math.round(old.durationMs / 1000));
+          await this.taskService.clearTimingMark(oldTarget);
+        }
+      }
+      // 关闭 overlay
+      this.pomodoroOverlay?.close();
+    }
+  }
+
+  /** Pomodoro phase 结束时：把当前 task 的计时累加回去（如果还在 focus） */
+  private async handlePomodoroPhaseEnd(ended: string, next: string, linkedFile: string | null): Promise<void> {
+    if (ended === "focus" && linkedFile) {
+      // focus 自然结束：把计时停下并累加
+      const old = this.timeTracker.stopIfRunning();
+      if (old) {
+        const tasks = await this.taskService.getAllTasks();
+        const target = tasks.find((t) => t.file === old.file);
+        if (target) {
+          await this.taskService.accumulateTime(target, Math.round(old.durationMs / 1000));
+          await this.taskService.clearTimingMark(target);
+        }
+      }
+      // 弹通知
+      try {
+        const notice = (window as any).Notice;
+        if (notice) {
+          new notice(`🍅 ${ended} done · ${next === "idle" ? "stopped" : "next: " + next}`, 5000);
+        }
+      } catch { /* ignore */ }
+    } else if (ended === "shortBreak" || ended === "longBreak") {
+      try {
+        const notice = (window as any).Notice;
+        if (notice) {
+          new notice(`☕ Break done · ready for next focus`, 5000);
+        }
+      } catch { /* ignore */ }
+    } else if (ended === "idle") {
+      // user stopped
+      this.pomodoroOverlay?.close();
+    }
+  }
+
+  /** 打开 Pomodoro 全屏 overlay（已有则 reveal） */
+  openPomodoroOverlay(): void {
+    if (this.pomodoroService.getState().phase === "idle") return;
+    if (this.pomodoroOverlay) {
+      this.pomodoroOverlay.open();
+      return;
+    }
+    this.pomodoroOverlay = new PomodoroOverlay({
+      app: this.app,
+      service: this.pomodoroService,
+      language: (this.settings.greetingLanguage as "zh" | "en") || "zh",
+      getCurrentTaskText: () => this.timeTracker.getCurrent()?.taskText || null,
+      onLinkTask: (file, text) => {
+        // 切换关联到另一个任务
+        if (!file) {
+          this.pomodoroService.stop();
+          return;
+        }
+        // 重新启动一个 focus with new task
+        this.pomodoroService.stop();
+        this.pomodoroService.startFocus(file, text || null);
+      },
+    });
+    this.pomodoroOverlay.open();
   }
 
   async loadSettings(): Promise<void> {

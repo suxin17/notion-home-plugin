@@ -16,6 +16,8 @@ import { Heatmap } from "../components/home/Heatmap";
 import { PieChart } from "../components/home/PieChart";
 import { HomeBackground } from "../components/home/HomeBackground";
 import { NotionHero } from "../components/home/NotionHero";
+import { StreakCard } from "../components/home/StreakCard";
+import { HabitCard } from "../components/habits/HabitCard";
 import { STAT_RANGES, STAT_RANGE_LABELS, type StatRange } from "../services/timeTracker";
 import { PIE_MODE_LABELS, type PieMode } from "../components/home/PieChart";
 import { parseQuickCapture, mergeTemplateOpts, pickFolderForTemplate, QUICK_CAPTURE_PREFIXES } from "../templates/taskTemplates";
@@ -299,6 +301,14 @@ function HomeScreen({ plugin }: { plugin: NotionHomePlugin }) {
             </section>
           )}
 
+          {mods.streak && (
+            <StreakCard plugin={plugin} language={lang} />
+          )}
+
+          {mods.habits && (
+            <HabitCard plugin={plugin} language={lang} />
+          )}
+
           {mods.quickCreate && (
             <section className="notion-home-card">
               <div className="notion-home-card-header">
@@ -432,7 +442,7 @@ function HomeScreen({ plugin }: { plugin: NotionHomePlugin }) {
       </div>
 
       {/* 全部模块都关了的提示 */}
-      {!mods.greeting && !mods.taskSummary && !mods.quickCreate && !mods.heatmap && !mods.recent && (
+      {!mods.greeting && !mods.taskSummary && !mods.quickCreate && !mods.heatmap && !mods.recent && !mods.streak && !mods.habits && (
         <div className="notion-home-empty-all">
           <h2>🫥</h2>
           <p>{lang === "en" ? "All sub-modules are off." : "Home 主页的子模块都关了。"}</p>

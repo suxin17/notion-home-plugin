@@ -20,7 +20,9 @@ import { formatHM } from "../../services/timeTracker";
 import type { Task, TaskStatus, TaskPriority } from "../../types";
 import { StatusPill, TagChip } from "./Pills";
 import { SubTaskList } from "./SubTaskList";
+import { PomodoroButton } from "../pomodoro/PomodoroButton";
 import type { SubTaskService } from "../../services/subTaskService";
+import type { PomodoroService } from "../../services/pomodoroService";
 
 interface TaskTableProps {
   tasks: Task[];
@@ -44,6 +46,12 @@ interface TaskTableProps {
   editingDate?: { taskId: string; which: "start" | "completionDate" } | null;
   onEditDate?: (taskId: string, which: "start" | "completionDate") => void;
   onCancelEditDate?: () => void;
+  /** 番茄钟 service（可选；不传则不显示 Pomodoro 列） */
+  pomodoroService?: PomodoroService;
+  /** 打开 Pomodoro 全屏 overlay */
+  onOpenPomodoroOverlay?: () => void;
+  /** 是否启用番茄模块（用户设置） */
+  pomodoroEnabled?: boolean;
 }
 
 // 状态循环
@@ -70,6 +78,9 @@ export function TaskTable({
   editingDate,
   onEditDate,
   onCancelEditDate,
+  pomodoroService,
+  onOpenPomodoroOverlay,
+  pomodoroEnabled = true,
 }: TaskTableProps) {
   const [editingTag, setEditingTag] = useState<string | null>(null);
   const [tagInput, setTagInput] = useState("");
@@ -119,6 +130,9 @@ export function TaskTable({
             <th className="col-date">📅 {labels.due}</th>
             <th className="col-tags">{labels.tags}</th>
             <th className="col-time">{labels.time}</th>
+            {pomodoroService && pomodoroEnabled && (
+              <th className="col-pomo">{language === "en" ? "Pomo" : "番茄"}</th>
+            )}
             <th className="col-action" />
           </tr>
         </thead>
@@ -314,6 +328,20 @@ export function TaskTable({
                     )}
                   </td>
 
+                  {/* Pomodoro button */}
+                  {pomodoroService && pomodoroEnabled && (
+                    <td className="col-pomo">
+                      <PomodoroButton
+                        service={pomodoroService}
+                        taskFile={t.file}
+                        taskText={t.basename}
+                        onOpenOverlay={() => onOpenPomodoroOverlay?.()}
+                        language={language}
+                        size="sm"
+                      />
+                    </td>
+                  )}
+
                   {/* Action: timer 按钮 */}
                   <td className="col-action">
                     <button
@@ -331,7 +359,7 @@ export function TaskTable({
                 {/* 展开行：colspan 全宽，渲染 SubTaskList */}
                 {isExpanded && subTaskService && tf instanceof TFile && (
                   <tr className="notion-task-table-expanded-row">
-                    <td colSpan={9}>
+                    <td colSpan={pomodoroService && pomodoroEnabled ? 10 : 9}>
                       <SubTaskList
                         file={tf}
                         service={subTaskService}

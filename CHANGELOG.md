@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-07-22
+
+### Added
+- **🍅 Pomodoro / 专注模式** — task-attached pomodoro state machine (4 phases: idle / focus / shortBreak / longBreak)
+  - `PomodoroButton` 出现在 TaskTable / BoardView / GanttView 每个任务行旁边，4 种视觉状态：空闲、当前专注、别的任务专注中、休息中
+  - `PomodoroOverlay` 全屏专注模式（圆环 + 倒计时 + 阶段文字 + 关联任务显示 + 停止/跳过按钮）
+  - focus 自动启动 timeTracker 写回关联任务；break 自动停止
+  - 命令面板：`🍅 Start a pomodoro` / `⏹ Stop pomodoro` / `🍅 Open pomodoro overlay`
+  - 配置：focus 时长、短休/长休时长、每 N 个 focus 后长休、自动开始选项
+  - 阈值：默认 60s 才算"有效 focus"（防止误触污染统计）
+- **🔥 Streak / 连续打卡** — `StreakCard` 出现在 Home 左栏
+  - 阈值可配（默认 60s = 任何计时都算打卡）
+  - 显示：当前连续天数 + 史上最长 + 今日状态
+  - 跨天容错：今天还没达标时从昨天开始数
+- **🌱 Habit Tracker / 习惯追踪** — `HabitCard` 出现在 Home 左栏
+  - 新建/勾选/计数/删除/归档习惯（Habit Tracker 风格）
+  - 7 天周条 + 完成率 + 每习惯连续天数
+  - 二值 / 计数两种模式
+  - 10 色 preset palette，撞色自动避开
+- **📊 Pomodoro count on Home** — `StreakCard` 顶部右侧显示今日完成番茄数
+
+### Changed
+- `Streak` 现在是 Home 独立模块（`modules.home.streak` 开关）
+- `Habits` 现在是 Home 独立模块（`modules.home.habits` 开关）
+- `Pomodoro` 现在是 Tasks 独立模块（`modules.tasks.pomodoro` 开关）
+
+### Data
+- 新增 `pomodoro: { config, state, records }` 持久化（data.json + localStorage 兜底）
+- 新增 `habits: { habits, checkins }` 持久化（同上）
+- 兼容老版本：缺失的 `pomodoro` / `habits` / `modules.streak` / `modules.habits` / `modules.tasks.pomodoro` 字段会自动填默认值
+
 ## [0.7.1] - 2026-07-22
 
 ### Added

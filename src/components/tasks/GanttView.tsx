@@ -17,8 +17,10 @@ import { StatusCircle } from "./StatusCircle";
 import { TimeAdjustMenu } from "./TimeAdjustMenu";
 import { SubTaskList } from "./SubTaskList";
 import { StatusPill, TagChip } from "./Pills";
+import { PomodoroButton } from "../pomodoro/PomodoroButton";
 import type { SubTaskService } from "../../services/subTaskService";
 import { getStatRange, type StatRange } from "../../services/timeTracker";
+import type { PomodoroService } from "../../services/pomodoroService";
 
 interface GanttViewProps {
   tasks: Task[];
@@ -41,6 +43,12 @@ interface GanttViewProps {
   subTaskService?: SubTaskService;
   /** 语言 */
   language?: "zh" | "en";
+  /** 番茄钟 service（可选） */
+  pomodoroService?: PomodoroService;
+  /** 打开 Pomodoro 全屏 overlay */
+  onOpenPomodoroOverlay?: () => void;
+  /** 是否启用番茄模块 */
+  pomodoroEnabled?: boolean;
 }
 
 const ROW_PX = 32; // 每行高度
@@ -69,6 +77,9 @@ export function GanttView({
   onToggleExpand,
   subTaskService,
   language = "zh",
+  pomodoroService,
+  onOpenPomodoroOverlay,
+  pomodoroEnabled = true,
 }: GanttViewProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   // 弹层定位用的 ref
@@ -387,6 +398,18 @@ export function GanttView({
                             onAdjust={onAdjustTime || (() => {})}
                             onSet={onSetTime || (() => {})}
                             variant="compact"
+                          />
+                        </span>
+                      )}
+                      {pomodoroService && pomodoroEnabled && (
+                        <span className="notion-gantt-row-pomo">
+                          <PomodoroButton
+                            service={pomodoroService}
+                            taskFile={t.file}
+                            taskText={t.basename}
+                            onOpenOverlay={() => onOpenPomodoroOverlay?.()}
+                            language={language}
+                            size="sm"
                           />
                         </span>
                       )}

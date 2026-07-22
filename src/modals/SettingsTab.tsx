@@ -383,6 +383,132 @@ export class NotionHomeSettingTab extends PluginSettingTab {
           })
       );
 
+    // ====== 番茄钟 ======
+    containerEl.createEl("h3", { text: "🍅 番茄钟" });
+
+    new Setting(containerEl)
+      .setName("单个 focus 时长（分钟）")
+      .setDesc("专注 25 分钟 → 短休 5 分钟 → 每 4 个 focus 长休 15 分钟（经典配置）。")
+      .addText((t) =>
+        t
+          .setPlaceholder("25")
+          .setValue(String(this.plugin.settings.pomodoro.focusMinutes))
+          .onChange(async (v) => {
+            const n = parseInt(v, 10);
+            if (!isNaN(n) && n >= 1 && n <= 120) {
+              this.plugin.settings.pomodoro.focusMinutes = n;
+              this.plugin.pomodoroService?.setConfig({ focusMinutes: n });
+              await this.plugin.saveSettings();
+            }
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("短休时长（分钟）")
+      .addText((t) =>
+        t
+          .setPlaceholder("5")
+          .setValue(String(this.plugin.settings.pomodoro.shortBreakMinutes))
+          .onChange(async (v) => {
+            const n = parseInt(v, 10);
+            if (!isNaN(n) && n >= 1 && n <= 30) {
+              this.plugin.settings.pomodoro.shortBreakMinutes = n;
+              this.plugin.pomodoroService?.setConfig({ shortBreakMinutes: n });
+              await this.plugin.saveSettings();
+            }
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("长休时长（分钟）")
+      .addText((t) =>
+        t
+          .setPlaceholder("15")
+          .setValue(String(this.plugin.settings.pomodoro.longBreakMinutes))
+          .onChange(async (v) => {
+            const n = parseInt(v, 10);
+            if (!isNaN(n) && n >= 1 && n <= 60) {
+              this.plugin.settings.pomodoro.longBreakMinutes = n;
+              this.plugin.pomodoroService?.setConfig({ longBreakMinutes: n });
+              await this.plugin.saveSettings();
+            }
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("每 N 个 focus 后长休")
+      .setDesc("每完成 N 个 focus 触发一次长休（默认 4）。")
+      .addText((t) =>
+        t
+          .setPlaceholder("4")
+          .setValue(String(this.plugin.settings.pomodoro.longBreakEvery))
+          .onChange(async (v) => {
+            const n = parseInt(v, 10);
+            if (!isNaN(n) && n >= 2 && n <= 10) {
+              this.plugin.settings.pomodoro.longBreakEvery = n;
+              this.plugin.pomodoroService?.setConfig({ longBreakEvery: n });
+              await this.plugin.saveSettings();
+            }
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("自动开始休息")
+      .setDesc("focus 结束后自动进入短休/长休。")
+      .addToggle((t) =>
+        t
+          .setValue(this.plugin.settings.pomodoro.autoStartBreak)
+          .onChange(async (v) => {
+            this.plugin.settings.pomodoro.autoStartBreak = v;
+            this.plugin.pomodoroService?.setConfig({ autoStartBreak: v });
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("自动开始下一个 focus")
+      .setDesc("休息结束后自动开始下一个 focus（关闭后休息结束会回到 idle 状态）。")
+      .addToggle((t) =>
+        t
+          .setValue(this.plugin.settings.pomodoro.autoStartFocus)
+          .onChange(async (v) => {
+            this.plugin.settings.pomodoro.autoStartFocus = v;
+            this.plugin.pomodoroService?.setConfig({ autoStartFocus: v });
+            await this.plugin.saveSettings();
+          })
+      );
+
+    // 番茄今日统计
+    const pomoCount = this.plugin.pomodoroService ? this.plugin.pomodoroService.getTodayCount() : 0;
+    const pomoTotal = this.plugin.pomodoroService ? this.plugin.pomodoroService.getTotalCount() : 0;
+    new Setting(containerEl)
+      .setName("番茄统计")
+      .setDesc("今日完成 / 累计完成。")
+      .addButton((b) =>
+        b
+          .setButtonText(`🍅 今日 ${pomoCount} · 累计 ${pomoTotal}`)
+          .setDisabled(true)
+      );
+
+    // ====== 连续打卡 ======
+    containerEl.createEl("h3", { text: "🔥 连续打卡" });
+
+    new Setting(containerEl)
+      .setName("打卡阈值（秒/天）")
+      .setDesc("每天累计达到这个秒数就算「打过卡」。默认 60 秒 = 任何计时都算。")
+      .addText((t) =>
+        t
+          .setPlaceholder("60")
+          .setValue(String(this.plugin.settings.streakMinSeconds))
+          .onChange(async (v) => {
+            const n = parseInt(v, 10);
+            if (!isNaN(n) && n >= 1 && n <= 3600) {
+              this.plugin.settings.streakMinSeconds = n;
+              await this.plugin.saveSettings();
+            }
+          })
+      );
+
     // Home 模块
     const homeGroup = containerEl.createDiv({ cls: "notion-home-settings-group" });
     homeGroup.createEl("h4", { text: "🏠 Home 主页 sub-task 开关" });
@@ -393,6 +519,8 @@ export class NotionHomeSettingTab extends PluginSettingTab {
       { key: "heatmap", label: "工作时间区", desc: "热力图 + 扇形图（包含两者）" },
       { key: "pieChart", label: "扇形图", desc: "热力图区左侧的扇形图（关闭后只显示热力图）" },
       { key: "recent", label: "最近编辑笔记", desc: "最近修改的 5 篇笔记" },
+      { key: "streak", label: "连续打卡卡", desc: "显示连续工作天数 + 今日番茄数（任何计时都算打卡）" },
+      { key: "habits", label: "习惯追踪卡", desc: "新建/勾选/计数习惯（Habit Tracker 风格）" },
     ];
     homeItems.forEach((it) => {
       new Setting(homeGroup)
@@ -417,6 +545,7 @@ export class NotionHomeSettingTab extends PluginSettingTab {
       { key: "gantt", label: "时间线视图", desc: "按文件分组的时间轴 bar" },
       { key: "timer", label: "任务计时器", desc: "每行的 ▶ 计时按钮 + 顶部计时条" },
       { key: "addBar", label: "底部添加条", desc: "快速新增任务的输入条" },
+      { key: "pomodoro", label: "番茄按钮", desc: "每个任务行的 🍅 按钮 + 全屏专注模式 overlay" },
     ];
     tasksItems.forEach((it) => {
       new Setting(tasksGroup)
@@ -532,7 +661,7 @@ export class NotionHomeSettingTab extends PluginSettingTab {
     const about = containerEl.createDiv({ cls: "setting-item" });
     about.createDiv({ cls: "setting-item-name", text: "Notion-style Home & Tasks" });
     const aboutDesc = about.createDiv({ cls: "setting-item-description" });
-    aboutDesc.createEl("div", { text: "版本 0.2.0" });
+    aboutDesc.createEl("div", { text: "版本 0.8.0" });
     aboutDesc.createEl("div", {
       text: "数据存储位置：.obsidian/plugins/notion-home-plugin/data.json",
     });

@@ -2704,6 +2704,27 @@
   height: 100%;
 }
 
+/* 悬浮：当前扇形加粗，其他变淡 */
+.notion-pie-svg g > circle {
+  cursor: pointer;
+  transition: stroke-width 150ms ease, opacity 150ms ease;
+}
+
+.notion-pie-svg:hover g > circle {
+  opacity: 0.45;
+}
+
+.notion-pie-svg g > circle:hover {
+  opacity: 1;
+  stroke-width: 26;  /* 默认 20，+6 视觉凸出 */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notion-pie-svg g > circle {
+    transition: none !important;
+  }
+}
+
 .notion-pie-center {
   position: absolute;
   top: 50%;

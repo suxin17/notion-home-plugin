@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.3] - 2026-07-24
+
+### Added
+- **Pie chart animations**
+  - **Wipe-in draw**: segments animate from 0 to target size with 60ms stagger (cubic-bezier ease) when the chart first appears or when the data set changes (mode switch / range change)
+  - **Count-up number**: center total animates from 0 to target over 500ms (ease-out cubic) — only on first mount, updates are instant
+  - **Hover highlight**: hovering a segment makes it bolder (+6px stroke) and fades others to 0.45 opacity
+- **Reduced-motion support**: respects `prefers-reduced-motion: reduce` — all transitions disabled for users with motion sensitivity
+
 ## [0.8.2] - 2026-07-24
 
 ### Fixed

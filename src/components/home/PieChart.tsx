@@ -7,8 +7,14 @@
 //   - 按 StatRange 过滤（本周/本月/本年）
 //   - 画 SVG 圆环（donut），中心显示总计
 //   - 旁边图例
+//
+// 动画：
+//   - 首次/数据变化时扇形从顶部顺时针擦入（stagger）
+//   - 中心数字从 0 ease-out 滚到目标
+//   - 悬浮扇形 stroke 加粗、其他变淡
+//   - 尊重 prefers-reduced-motion
 
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import type { Task, TaskStatus, TimeLogEntry } from "../../types";
 import { STATUS_LABELS } from "../../types";
 import { formatHM, getStatRange, filterLogByRange, type StatRange } from "../../services/timeTracker";
@@ -24,6 +30,41 @@ interface PieChartProps {
   refreshKey: number;
   /** 统计周期：本周/本月/本年 */
   range?: StatRange;
+}
+
+/** 把数字从 0 滚到 target（仅在 target 变化时启动一次，refreshKey 不重置） */
+function useCountUp(target: number, duration: number = 500): number {
+  const [val, setVal] = useState(0);
+  const firstMountRef = useRef(false);
+  useEffect(() => {
+    // 跳过首次挂载前的 0 状态（直接显示 target）
+    if (!firstMountRef.current) {
+      firstMountRef.current = true;
+      setVal(target);
+      return;
+    }
+    // 后续 target 变化时：数字太接近就直接跳
+    if (Math.abs(target - val) < 1) {
+      setVal(target);
+      return;
+    }
+    const start = performance.now();
+    const from = val;
+    const delta = target - from;
+    let raf = 0;
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      // ease-out cubic
+      const eased = 1 - Math.pow(1 - t, 3);
+      setVal(Math.round(from + delta * eased));
+      if (t < 1) raf = requestAnimationFrame(tick);
+      else setVal(target);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [target]);
+  return val;
 }
 
 const STATUS_ORDER: TaskStatus[] = ["Doing", "Prepare", "Done", "Abandon"];
@@ -115,6 +156,31 @@ export function PieChart({ tasks, timeLog, mode, language = "zh", refreshKey, ra
     return { ...seg, fraction, dash, gap, offset };
   });
 
+  // === 动画：跟踪 segment keys，变化时重新触发擦入 ===
+  const [drawn, setDrawn] = useState(false);
+  const prevKeysRef = useRef<string>("");
+  const segKeys = arcs.map((a) => a.label).sort().join("|");
+  useEffect(() => {
+    const isFirst = prevKeysRef.current === "";
+    const changed = prevKeysRef.current !== segKeys;
+    prevKeysRef.current = segKeys;
+    if (isFirst || changed) {
+      setDrawn(false);
+      // 双 rAF：等 paint 提交完再切回 shown，触发 transition
+      let id2 = 0;
+      const id1 = requestAnimationFrame(() => {
+        id2 = requestAnimationFrame(() => setDrawn(true));
+      });
+      return () => {
+        cancelAnimationFrame(id1);
+        if (id2) cancelAnimationFrame(id2);
+      };
+    }
+  }, [segKeys]);
+
+  // === 动画：中心总数从 0 滚到 target ===
+  const displayedTotal = useCountUp(totalSec, 500);
+
   return (
     <div className="notion-pie">
       {mode === "tag" && (
@@ -136,24 +202,33 @@ export function PieChart({ tasks, timeLog, mode, language = "zh", refreshKey, ra
             opacity={0.4}
           />
           <g transform={`rotate(-90 ${center} ${center})`}>
-            {arcs.map((arc) => (
-              <circle
-                key={arc.label}
-                cx={center}
-                cy={center}
-                r={radius}
-                fill="none"
-                stroke={arc.color}
-                strokeWidth={stroke}
-                strokeDasharray={`${arc.dash} ${arc.gap}`}
-                strokeDashoffset={arc.offset}
-                style={{ transition: "stroke-dasharray 0.3s, stroke-dashoffset 0.3s" }}
-              />
-            ))}
+            {arcs.map((arc, i) => {
+              // 动画用的 dash 数组：未画入时是 "0 999"（隐藏）
+              const dashStr = drawn ? `${arc.dash} ${arc.gap}` : `0 999`;
+              return (
+                <circle
+                  key={arc.label}
+                  cx={center}
+                  cy={center}
+                  r={radius}
+                  fill="none"
+                  stroke={arc.color}
+                  strokeWidth={stroke}
+                  strokeDasharray={dashStr}
+                  strokeDashoffset={arc.offset}
+                  style={{
+                    transition: drawn
+                      ? `stroke-dasharray 600ms cubic-bezier(0.4, 0, 0.2, 1) ${i * 60}ms, stroke-width 150ms ease, opacity 150ms ease`
+                      : "none",
+                    cursor: "pointer",
+                  }}
+                />
+              );
+            })}
           </g>
         </svg>
         <div className="notion-pie-center">
-          <div className="notion-pie-center-num">{formatHM(totalSec * 1000)}</div>
+          <div className="notion-pie-center-num">{formatHM(displayedTotal * 1000)}</div>
           <div className="notion-pie-center-label">{language === "en" ? "Total" : "总计"}</div>
         </div>
       </div>

@@ -1,7 +1,7 @@
 {
   "id": "notion-home-plugin",
   "name": "Notion-style Home & Tasks",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "minAppVersion": "1.4.0",
   "description": "Notion-style Home page (banner + avatar + two columns) with task manager (Table / Board / Gantt views), built-in timer, work-time heatmap, pie chart, sub-task editor, **Pomodoro focus mode, daily streak, habit tracker**, and bilingual UI.",
   "author": "suxin17",

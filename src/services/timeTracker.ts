@@ -386,6 +386,32 @@ export class TimeTracker {
 
   // ===== 工具 =====
 
+  /**
+   * 手动加时间（不通过真实 timer）
+   * - 来自 TimeAdjustMenu 的 +/-15m 按钮
+   * - 记到 log 里，让 heatmap / pie 也跟着反映
+   * - 默认归属到今天；可以传 date 改归属
+   */
+  addManualEntry(task: Task, seconds: number, date?: string): void {
+    if (seconds === 0 || !task) return;
+    const dateStr = date || this.isoDate(new Date());
+    // 用当天中午作为时间戳（保证 heatmap 能归到正确日期，不受时区影响）
+    const baseTs = new Date(`${dateStr}T12:00:00`).getTime();
+    // 正负时间用不同区间（正=baseTs+1, 负=baseTs-1），避免 start==end 触发 0 duration
+    const start = seconds > 0 ? baseTs : baseTs - Math.abs(seconds) * 1000;
+    const durationMs = Math.abs(seconds) * 1000;
+    if (durationMs < 1000) return; // 太短不入 log
+    this.log.push({
+      date: dateStr,
+      file: task.file,
+      taskText: task.basename,
+      start,
+      end: start + durationMs,
+      durationMs,
+    });
+    this.notify();
+  }
+
   private isoDate(d: Date): string {
     const y = d.getFullYear();
     const m = (d.getMonth() + 1).toString().padStart(2, "0");

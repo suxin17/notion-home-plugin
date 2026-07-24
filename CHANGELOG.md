@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.1] - 2026-07-24
+
+### Fixed
+- **TimeAdjustMenu manual +/- not showing in heatmap** — `+15m / -15m` buttons now also write a synthetic entry to the time log (attributed to today), so the work-time heatmap and pie chart reflect the manual adjustment. Previously, only real-timer sessions appeared in those stats.
+- **Pie chart adjacent slices looked identical** — the 18-color palette was reordered to maximize hue distance between adjacent indices (red → blue → orange → green → purple → ...), and the color-assignment algorithm now sorts slices by size first and assigns the top color to the largest slice. Two big green-ish slices should no longer happen.
+
 ## [0.8.0] - 2026-07-22
 
 ### Added

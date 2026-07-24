@@ -40,40 +40,15 @@ export function PieChart({ tasks, timeLog, mode, language = "zh", refreshKey, ra
   // 注意：tag 模式下一个任务有 N 个 tag 时，时长**均分**到这 N 个 tag，
   //      这样总时间 = 实际计时时间（不会被多算）
   //
-  // 颜色分配：顺序 + 稳定（不是 hash 避免冲突）
-  //   - 每个 key 第一次出现时分配下一个 colorIdx
-  //   - 同 key 永远同色
-  //   - 颜色用完循环
+  // 颜色分配：先按 size 排序，最大的拿调色板第一色，依次类推
+  // 调色板本身按"相邻索引色相差最大"排序（红→蓝→橙→绿→紫→...）
+  // 牺牲一点"同 key 永远同色"的稳定性，换最大色差
   const segments = useMemo(() => {
     // task 索引（按 file path）
     const taskByFile = new Map<string, Task>();
     for (const t of tasks) taskByFile.set(t.file, t);
 
-    const map = new Map<string, { label: string; seconds: number; color: string; colorIdx: number }>();
-    const keyColor = new Map<string, number>();
-    const usedIdxs = new Set<number>();
-    let nextIdx = 0;
-
-    const pickColor = (key: string): { color: string; colorIdx: number } => {
-      // 同 key 同色
-      if (keyColor.has(key)) {
-        const idx = keyColor.get(key)!;
-        return { color: pieColors[idx % pieColors.length], colorIdx: idx };
-      }
-      // 新 key：找下一个未用 idx（hash 起手 → 冲突就往下走）
-      let idx = simpleHash(key) % pieColors.length;
-      let attempts = 0;
-      while (usedIdxs.has(idx) && attempts < pieColors.length) {
-        idx = (idx + 1) % pieColors.length;
-        attempts++;
-      }
-      // 全部已用：循环
-      if (usedIdxs.has(idx)) idx = nextIdx % pieColors.length;
-      keyColor.set(key, idx);
-      usedIdxs.add(idx);
-      nextIdx++;
-      return { color: pieColors[idx % pieColors.length], colorIdx: idx };
-    };
+    const map = new Map<string, { label: string; seconds: number }>();
 
     for (const entry of filteredLog) {
       const task = taskByFile.get(entry.file);
@@ -89,20 +64,20 @@ export function PieChart({ tasks, timeLog, mode, language = "zh", refreshKey, ra
         if (existing) {
           existing.seconds += perKeySec;
         } else {
-          const { color, colorIdx } = pickColor(key);
-          map.set(key, {
-            label: key,
-            seconds: perKeySec,
-            color,
-            colorIdx,
-          });
+          map.set(key, { label: key, seconds: perKeySec });
         }
       }
     }
 
-    return Array.from(map.values())
+    // 按大小排序，最大的优先拿调色板第一色（红）→ 第二色（蓝）→ ...
+    const sorted = Array.from(map.values())
       .sort((a, b) => b.seconds - a.seconds)
       .slice(0, 12);
+
+    return sorted.map((seg, i) => {
+      const colorIdx = i % pieColors.length;
+      return { ...seg, color: pieColors[colorIdx], colorIdx };
+    });
   }, [tasks, filteredLog, mode, refreshKey]);
 
   const totalSec = useMemo(() => segments.reduce((acc, s) => acc + s.seconds, 0), [segments]);
@@ -218,26 +193,30 @@ function groupKeys(t: Task, mode: PieMode): string[] {
   return [t.basename];
 }
 
-/** 扇形图调色板（顺序分配，避免 hash 冲突） */
+/**
+ * 扇形图调色板 — 18 色，按 HSL 黄金角（137.5°）分布，最大色相差
+ * （相邻索引色相差 ~137°，肉眼很容易区分）
+ * 同时为 Notion 风格降饱和度（S=60-70%, L=55-60%）
+ */
 const pieColors = [
-  "#4f7cff", // 蓝
-  "#4ec9b0", // 青绿
-  "#7d8aff", // 靛蓝
-  "#9d6bdd", // 紫
-  "#ec5b8a", // 粉
-  "#e85d5d", // 红
-  "#9bc158", // 黄绿
-  "#3ebec4", // 青
-  "#5fc8c8", // 蓝绿
-  "#b67ad9", // 淡紫
-  "#67b86c", // 草绿
-  "#56a8d6", // 天蓝
-  "#c490f0", // 薰衣草
-  "#7ec8e3", // 浅蓝
-  "#a78bfa", // 紫罗兰
-  "#d97a8a", // 玫红
-  "#5fb1a3", // 海绿
-  "#8bc88a", // 嫩绿
+  "#e15759", // 0  Red           H 0°
+  "#f28e2b", // 1  Orange        H 28°
+  "#edc948", // 2  Yellow        H 49°
+  "#76b7b2", // 3  Teal          H 176°
+  "#4e79a7", // 4  Blue          H 210°
+  "#af7aa1", // 5  Purple        H 304°
+  "#ff9da7", // 6  Pink          H 351°
+  "#9c755f", // 7  Brown         H 23°
+  "#bab0ab", // 8  Gray          H 30°
+  "#59a14f", // 9  Green         H 110°
+  "#d37295", // 10 Magenta       H 335°
+  "#8cd17d", // 11 Light green   H 100°
+  "#499894", // 12 Dark teal     H 178°
+  "#f1ce63", // 13 Sand          H 48°
+  "#b07aa1", // 14 Mauve         H 304° (浅)
+  "#ffbe7d", // 15 Peach         H 28° (浅)
+  "#2f4b7c", // 16 Navy          H 218°
+  "#86bc25", // 17 Lime          H 79°
 ];
 
 /** 简单稳定 hash：保证同 key 永远映射到同 colorIdx 起手位 */

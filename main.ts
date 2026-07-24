@@ -178,6 +178,8 @@ export default class NotionHomePlugin extends Plugin {
     this.noteService = new NoteService(this.app);
     this.timeTracker = new TimeTracker();
     this.subTaskService = new SubTaskService(this.app);
+    // 把 timeTracker 注入 taskService，这样 manual +/- 时间也能进 log（heatmap/pie 反映）
+    this.taskService.setTimeTracker(this.timeTracker);
 
     // 加载 timeLog，优先用 data.json，没有就用 localStorage 兜底（onunload 异步被打断时保命）
     let log = (data?.timeLog as any) || [];

@@ -25,6 +25,8 @@ export class TaskService {
   private app: App;
   private cache = new Map<string, FileCache>();
   private listeners = new Set<() => void>();
+  /** 可选：注入 timeTracker，让 manual +/- 时间也能进 log（heatmap/pie 反映） */
+  private timeTracker: { addManualEntry(task: any, seconds: number, date?: string): void } | null = null;
 
   constructor(app: App) {
     this.app = app;
@@ -38,6 +40,11 @@ export class TaskService {
     });
     // metadataCache 改变时也失效（编辑 frontmatter 时 cache 会更新）
     this.app.metadataCache.on("changed", (f) => this.invalidate(f));
+  }
+
+  /** 注入 timeTracker（plugin.onload 调用一次） */
+  setTimeTracker(tt: { addManualEntry(task: any, seconds: number, date?: string): void }): void {
+    this.timeTracker = tt;
   }
 
   subscribe(fn: () => void): () => void {
@@ -200,6 +207,10 @@ export class TaskService {
   async adjustTime(task: Task, deltaSeconds: number): Promise<void> {
     const newTotal = Math.max(0, (task.totalSeconds || 0) + deltaSeconds);
     await this.setTimeTotal(task, newTotal);
+    // 同步写 timeLog，让 heatmap / pie 反映手动调整
+    if (this.timeTracker && deltaSeconds !== 0) {
+      this.timeTracker.addManualEntry(task, deltaSeconds);
+    }
   }
 
   /** 写一个当前正在计时的提示（用户回到笔记能看到） */

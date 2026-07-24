@@ -123,6 +123,31 @@ export function PieChart({ tasks, timeLog, mode, language = "zh", refreshKey, ra
 
   const totalSec = useMemo(() => segments.reduce((acc, s) => acc + s.seconds, 0), [segments]);
 
+  // === 动画 hooks 必须无条件调用（React rules of hooks）===
+  // 跟踪 segment keys，变化时重新触发擦入
+  const [drawn, setDrawn] = useState(false);
+  const prevKeysRef = useRef<string>("");
+  const segKeys = useMemo(() => segments.map((s) => s.label).sort().join("|"), [segments]);
+  useEffect(() => {
+    const isFirst = prevKeysRef.current === "";
+    const changed = prevKeysRef.current !== segKeys;
+    prevKeysRef.current = segKeys;
+    if (isFirst || changed) {
+      setDrawn(false);
+      // 双 rAF：等 paint 提交完再切回 shown，触发 transition
+      let id2 = 0;
+      const id1 = requestAnimationFrame(() => {
+        id2 = requestAnimationFrame(() => setDrawn(true));
+      });
+      return () => {
+        cancelAnimationFrame(id1);
+        if (id2) cancelAnimationFrame(id2);
+      };
+    }
+  }, [segKeys]);
+  // 中心总数从 0 滚到 target
+  const displayedTotal = useCountUp(totalSec, 500);
+
   if (segments.length === 0 || totalSec === 0) {
     const rLabel = language === "en" ? rangeInfo.label.en : rangeInfo.label.zh;
     return (
@@ -155,31 +180,6 @@ export function PieChart({ tasks, timeLog, mode, language = "zh", refreshKey, ra
     cumulative += fraction;
     return { ...seg, fraction, dash, gap, offset };
   });
-
-  // === 动画：跟踪 segment keys，变化时重新触发擦入 ===
-  const [drawn, setDrawn] = useState(false);
-  const prevKeysRef = useRef<string>("");
-  const segKeys = arcs.map((a) => a.label).sort().join("|");
-  useEffect(() => {
-    const isFirst = prevKeysRef.current === "";
-    const changed = prevKeysRef.current !== segKeys;
-    prevKeysRef.current = segKeys;
-    if (isFirst || changed) {
-      setDrawn(false);
-      // 双 rAF：等 paint 提交完再切回 shown，触发 transition
-      let id2 = 0;
-      const id1 = requestAnimationFrame(() => {
-        id2 = requestAnimationFrame(() => setDrawn(true));
-      });
-      return () => {
-        cancelAnimationFrame(id1);
-        if (id2) cancelAnimationFrame(id2);
-      };
-    }
-  }, [segKeys]);
-
-  // === 动画：中心总数从 0 滚到 target ===
-  const displayedTotal = useCountUp(totalSec, 500);
 
   return (
     <div className="notion-pie">

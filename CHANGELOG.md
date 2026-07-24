@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Hover highlight**: hovering a segment makes it bolder (+6px stroke) and fades others to 0.45 opacity
 - **Reduced-motion support**: respects `prefers-reduced-motion: reduce` — all transitions disabled for users with motion sensitivity
 
+## [0.8.4] - 2026-07-24
+
+### Fixed
+- **Home view not rendering at all in v0.8.3** — broke the **React rules of hooks** by placing `useState` / `useRef` / `useMemo` / `useEffect` / `useCountUp` AFTER the empty-state early return. When the chart first mounted with no segments, hooks weren't called; on the next render with data, they were — React threw "Rendered more hooks than during the previous render" and the whole Home view crashed. All hooks now sit before the conditional return so they're called on every render.
+
 ## [0.8.2] - 2026-07-24
 
 ### Fixed

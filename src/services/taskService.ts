@@ -72,8 +72,23 @@ export class TaskService {
     const cached = this.cache.get(file.path);
     if (cached && cached.mtime === file.stat.mtime) return cached.task;
 
-    const meta = this.app.metadataCache.getFileCache(file);
-    const fm = meta?.frontmatter;
+    let meta = this.app.metadataCache.getFileCache(file);
+    let fm = meta?.frontmatter;
+
+    // Fallback：刚 create 的文件 metadataCache 可能还没索引完
+    // 自己读文件内容 + 解析 frontmatter 兜底，让新任务立刻可见
+    if (!fm) {
+      try {
+        const content = await this.app.vault.cachedRead(file);
+        const parsed = parseFrontmatterFromContent(content);
+        if (parsed) {
+          fm = parsed;
+          // meta 留空（cache.tags/body 内联 tag 会缺失，但总比不显示好）
+        }
+      } catch {
+        // ignore
+      }
+    }
 
     if (!fm || !fm.Status) {
       // 没有 frontmatter 或没有 Status → 不是 task
@@ -82,7 +97,7 @@ export class TaskService {
     }
 
     const task = parseTask(file, fm, meta);
-    this.cache.set(file.path, { mtime: file.stat.mtime, task });
+    this.cache.set(file.path, { mtime: file.stat.mtime, task: task });
     return task;
   }
 
@@ -416,4 +431,80 @@ function renderFrontmatter(fm: Record<string, any>): string {
   }
   lines.push("---");
   return lines.join("\n");
+}
+
+/**
+ * 简单 YAML frontmatter 解析（仅支持我们写的格式）
+ * - 用作 metadataCache 未索引完时的 fallback
+ * - 支持：key: value、key: "quoted"、key: [a, b]、列表 - item、注释 #
+ * - 不支持：嵌套 map、跨行 value、锚点 — Obsidian 自己的 frontmatter 也很少用这些
+ */
+function parseFrontmatterFromContent(content: string): Record<string, any> | null {
+  // 必须以 --- 起头
+  const m = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+  if (!m) return null;
+  const body = m[1];
+  const lines = body.split(/\r?\n/);
+  const result: Record<string, any> = {};
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    // 跳过空行 / 注释
+    if (!line.trim() || /^\s*#/.test(line)) {
+      i++;
+      continue;
+    }
+    // key: value 或 key: [..] 或 key:  (列表)
+    const km = line.match(/^([A-Za-z0-9_\- ]+?):\s*(.*)$/);
+    if (!km) {
+      i++;
+      continue;
+    }
+    const key = km[1].trim();
+    const rest = km[2];
+    if (rest === "" || rest === undefined) {
+      // 可能是列表：往下看下一行是否是 "  - ..."
+      const items: string[] = [];
+      let j = i + 1;
+      while (j < lines.length) {
+        const ll = lines[j];
+        const im = ll.match(/^\s+-\s+(.*)$/);
+        if (im) {
+          items.push(unquoteYamlValue(im[1].trim()));
+          j++;
+        } else {
+          break;
+        }
+      }
+      if (items.length > 0) {
+        result[key] = items;
+        i = j;
+        continue;
+      }
+      result[key] = "";
+      i++;
+      continue;
+    }
+    // 内联数组：[a, b, c]
+    if (rest.startsWith("[") && rest.endsWith("]")) {
+      const inner = rest.slice(1, -1).trim();
+      if (!inner) {
+        result[key] = [];
+      } else {
+        result[key] = inner.split(",").map((s) => unquoteYamlValue(s.trim())).filter((s) => s !== "");
+      }
+      i++;
+      continue;
+    }
+    result[key] = unquoteYamlValue(rest.trim());
+    i++;
+  }
+  return result;
+}
+
+function unquoteYamlValue(v: string): string {
+  if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
+    return v.slice(1, -1).replace(/\\"/g, '"');
+  }
+  return v;
 }

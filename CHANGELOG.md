@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.2] - 2026-07-24
+
+### Fixed
+- **Newly created task not visible in Task Manager until Obsidian restart** — `getFileTask` now falls back to reading the file's content and parsing the frontmatter itself when `metadataCache` hasn't indexed the new file yet. Previously, the async indexer hadn't finished by the time the view re-rendered, so the file was treated as "not a task" and never appeared until restart.
+
 ## [0.8.1] - 2026-07-24
 
 ### Fixed
